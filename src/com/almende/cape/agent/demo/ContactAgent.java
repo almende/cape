@@ -20,17 +20,19 @@ import org.neo4j.kernel.Traversal;
 import org.neo4j.kernel.Uniqueness;
 
 import com.almende.cape.DB;
-import com.almende.eve.agent.Agent;
+import com.almende.eve.agent.AgentFactory;
 import com.almende.eve.json.annotation.Name;
+import com.almende.eve.service.xmpp.XmppService;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 
-public class ContactAgent extends Agent {
-	static final ObjectMapper om = new ObjectMapper();
+public class ContactAgent extends com.almende.eve.agent.Agent {
 	
+	static final ObjectMapper om = new ObjectMapper();
+
 	private static enum RelTypes implements RelationshipType
 	{
 	    GROUPMEMBER,
@@ -40,7 +42,8 @@ public class ContactAgent extends Agent {
 	//Generate test data in graph like manner:
 	private static boolean generateTestData(){
 		GraphDatabaseService db = DB.get();
-		
+
+		System.out.println("GenerateTestData() called!");
 		Node rootNode = DB.getIndex().get("id","agents").getSingle();
 		if (rootNode == null){
 			Transaction tx = DB.get().beginTx();
@@ -119,6 +122,30 @@ public class ContactAgent extends Agent {
 		}
 		System.out.println("Found rootnode:"+rootNode.getId()+":"+rootNode.toString());
 		return true;
+	}
+	
+	public void xmppConnect(@Name("username") String username,
+	        @Name("password") String password) throws Exception {
+	    AgentFactory factory = getContext().getAgentFactory();
+
+	    XmppService service = (XmppService) factory.getService("xmpp");
+	    if (service != null) {
+	        service.connect(getId(), username, password);
+	    }
+	    else {
+	        throw new Exception("No XMPP service registered");
+	    }
+	}
+
+	public void xmppDisconnect() throws Exception {
+	    AgentFactory factory = getContext().getAgentFactory();
+	    XmppService service = (XmppService) factory.getService("xmpp");
+	    if (service != null) {
+	        service.disconnect(getId());
+	    }
+	    else {
+	        throw new Exception("No XMPP service registered");
+	    }
 	}
 	
 	public String getContacts(@Name("filter") String filter){
@@ -249,7 +276,7 @@ public class ContactAgent extends Agent {
 
 	@Override
 	public String getVersion() {
-		return "0.1";
+		return "0.2";
 	}
 
 }

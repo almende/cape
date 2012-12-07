@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project-modules id="moduleCoreId" project-version="1.5.0">
-    <wb-module deploy-name="Cape Agents">
+    <wb-module deploy-name="CapeAgents">
         <wb-resource deploy-path="/" source-path="/WebContent" tag="defaultRootSource"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src"/>
         <property name="context-root" value="Cape_Agents"/>
-        <property name="java-output-path" value="/Cape Agents/bin"/>
+        <property name="java-output-path" value="/CapeAgents/bin"/>
     </wb-module>
 </project-modules>

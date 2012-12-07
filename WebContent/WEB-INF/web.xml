@@ -3,7 +3,7 @@
 	xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
 	id="WebApp_ID" version="3.0">
-	<display-name>Cape Agents</display-name>
+	<display-name>CapeAgents</display-name>
 	<welcome-file-list>
 		<welcome-file>index.html</welcome-file>
 		<welcome-file>index.htm</welcome-file>
@@ -13,8 +13,8 @@
 		<welcome-file>default.jsp</welcome-file>
 	</welcome-file-list>
 	<servlet>
-		<servlet-name>MultiAgentServlet</servlet-name>
-		<servlet-class>com.almende.eve.servlet.MultiAgentServlet</servlet-class>
+		<servlet-name>AgentServlet</servlet-name>
+		<servlet-class>com.almende.eve.service.http.AgentServlet</servlet-class>
 		<init-param>
 			<description>servlet configuration (yaml file)</description>
 			<param-name>config</param-name>
@@ -22,7 +22,8 @@
 		</init-param>
 	</servlet>
 	<servlet-mapping>
-		<servlet-name>MultiAgentServlet</servlet-name>
+		<servlet-name>AgentServlet</servlet-name>
 		<url-pattern>/agents/*</url-pattern>
+		<url-pattern>/CapeAgents/agents/*</url-pattern>
 	</servlet-mapping>
 </web-app>
