@@ -2,7 +2,7 @@
 
 services:
 - class: HttpService
-  servlet_url: http://localhost:8080/CapeAgents/agents/
+  servlet_url: http://localhost:8080/Cape_Agents/agents/
 - class: XmppService
   host: ec2-54-246-112-19.eu-west-1.compute.amazonaws.com
   port: 5222
