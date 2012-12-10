@@ -24,6 +24,7 @@
 	<servlet-mapping>
 		<servlet-name>AgentServlet</servlet-name>
 		<url-pattern>/agents/*</url-pattern>
+		<url-pattern>/cape/agents/*</url-pattern>
 		<url-pattern>/CapeAgents/agents/*</url-pattern>
 	</servlet-mapping>
 </web-app>
