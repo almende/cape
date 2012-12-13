@@ -4,8 +4,8 @@ services:
 - class: XmppService
   host: openid.almende.org
   port: 5222
-  service: openid.almende.org
-       
+  serviceName: openid.almende.org
+
 # context settings (for persistency)
 context:
   class: FileContextFactory
