@@ -2,10 +2,11 @@
 
 services:
 - class: HttpService
-  servlet_url: http://localhost:8080/cape/agents/
+  servlet_url: http://openid.almende.org:8080/cape/agents/
 - class: XmppService
-  host: ec2-54-246-112-19.eu-west-1.compute.amazonaws.com
+  host: openid.almende.org
   port: 5222
+  service: openid.almende.org
        
 # context settings
 # the context is used by agents for storing their state.
