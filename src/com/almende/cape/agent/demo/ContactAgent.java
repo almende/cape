@@ -126,7 +126,7 @@ public class ContactAgent extends com.almende.eve.agent.Agent {
 	
 	public void xmppConnect(@Name("username") String username,
 	        @Name("password") String password) throws Exception {
-	    AgentFactory factory = getContext().getAgentFactory();
+	    AgentFactory factory = getAgentFactory();
 
 	    XmppService service = (XmppService) factory.getService("xmpp");
 	    if (service != null) {
@@ -138,7 +138,7 @@ public class ContactAgent extends com.almende.eve.agent.Agent {
 	}
 
 	public void xmppDisconnect() throws Exception {
-	    AgentFactory factory = getContext().getAgentFactory();
+	    AgentFactory factory = getAgentFactory();
 	    XmppService service = (XmppService) factory.getService("xmpp");
 	    if (service != null) {
 	        service.disconnect(getId());
