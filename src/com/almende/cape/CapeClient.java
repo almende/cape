@@ -3,21 +3,18 @@ package com.almende.cape;
 import java.util.Scanner;
 
 import com.almende.cape.agent.CapeClientAgent;
+import com.almende.cape.handler.NotificationHandler;
+import com.almende.cape.handler.StateChangeHandler;
 import com.almende.eve.agent.AgentFactory;
 import com.almende.eve.context.MemoryContextFactory;
-import com.almende.eve.service.http.HttpService;
 import com.almende.eve.service.xmpp.XmppService;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
  * CAPE Client interface
- * @author jos
  */
 public class CapeClient {
-	private static String CONTACT_AGENT_URL = 
-			"http://10.10.1.118:8080/Cape_Agents/agents/contactagent1/";
-	
 	public static void main(String[] args) {
 		try {
 			// TODO: request username and password in console
@@ -38,19 +35,16 @@ public class CapeClient {
 	 */
 	public CapeClient() {
 		// TODO: read configuration from config file
-		factory = new AgentFactory();
+		factory = new AgentFactory();		
 		
 		factory.setContextFactory(new MemoryContextFactory(factory));
 
-		String host = "ec2-54-246-112-19.eu-west-1.compute.amazonaws.com";
+		String host = "openid.almende.org";
 		Integer port = 5222;
+		String service = host;
 		XmppService xmppService = new XmppService(factory);
-		xmppService.init(host, port, null);
+		xmppService.init(host, port, service);
 		factory.addService(xmppService);
-		
-		HttpService httpService = new HttpService(factory);
-		httpService.init("http://localhost:8080/fake");
-		factory.addService(httpService);
 	}
 	
 	/**
@@ -60,11 +54,14 @@ public class CapeClient {
 	 * @throws Exception 
 	 */
 	public void login(String username, String password) throws Exception {
+		// ensure we are logged out
+		logout();
+		
 		// create a user agent if not existing
-		agent = (CapeClientAgent) factory.getAgent(username);
+		CapeClientAgent agent = (CapeClientAgent) factory.getAgent(username);
 		if (agent == null) {
-			agent = (CapeClientAgent) factory.createAgent(CapeClientAgent.class, username);
-			agent.setContactAgent(CONTACT_AGENT_URL);
+			agent = (CapeClientAgent) factory.createAgent(
+					CapeClientAgent.class, username);
 		}
 		
 		// connect to xmpp server
@@ -74,8 +71,8 @@ public class CapeClient {
 		}
 		xmppService.connect(username, username, password);
 		
-		// copy current username
-		this.username = username;
+		// no exceptions thrown
+		this.agent = agent;
 	}
 	
 	/**
@@ -83,16 +80,79 @@ public class CapeClient {
 	 * @throws Exception 
 	 */
 	public void logout() throws Exception {
-		if (factory == null || username == null) {
-			return;
+		if (agent != null) {
+			agent.removeNotificationHandler();
+			agent.removeStateChangeHandlers();
+			
+			// disconnect from xmpp service
+			XmppService xmppService = (XmppService) factory.getService("xmpp");
+			if (xmppService == null) {
+				throw new Exception("No XMPP Service configured.");
+			}
+			xmppService.disconnect(agent.getId());
+
+			agent.destroy();
+			agent = null;
 		}
+	}
 		
-		// disconnect from xmpp service
-		XmppService xmppService = (XmppService) factory.getService("xmpp");
-		if (xmppService == null) {
-			throw new Exception("No XMPP Service configured.");
+	/**
+	 * Send a notification to the logged in user
+	 * @param message
+	 * @throws Exception 
+	 */
+	public void sendNotification(String message) throws Exception {
+		agent.sendNotification(null, message);
+	}
+
+	/**
+	 * Send a notification to a user
+	 * @param userId
+	 * @param message
+	 * @throws Exception 
+	 */
+	public void sendNotification(String userId, String message) 
+			throws Exception {
+		if (agent == null) {
+			throw new Exception("Not logged in");
 		}
-		xmppService.disconnect(username);		
+		agent.sendNotification(userId, message);
+	}
+
+	/**
+	 * Set a handler for incoming notifications
+	 * @param handler
+	 * @throws Exception 
+	 */
+	public void onNotification(NotificationHandler handler) 
+			throws Exception {
+		if (agent == null) {
+			throw new Exception("Not logged in");
+		}
+		agent.setNotificationHandler(handler);
+	}
+	/**
+	 * Set a handler to be triggered when a users state changes
+	 * @param notificationHandler
+	 * @throws Exception 
+	 */
+	public void onStateChange(String state, StateChangeHandler handler) 
+			throws Exception {
+		String userId = null;
+		onStateChange(userId, state, handler);
+	}
+	
+	/**
+	 * Set a handler to be triggered when a users state changes
+	 * @param notificationHandler
+	 * @throws Exception 
+	 */
+	public void onStateChange(String userId, String state, 
+			StateChangeHandler handler) throws Exception {
+		if (agent == null) {
+			throw new Exception("Not logged in");
+		}
+		agent.addStateChangeHandler(userId, state, handler);
 	}
 	
 	/**
@@ -108,7 +168,15 @@ public class CapeClient {
 		return agent.getContacts(filter);
 	}
 	
-	private String username = null;
+	@Override
+	public void finalize () {
+		try {
+			logout();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
 	private CapeClientAgent agent = null;
 	private AgentFactory factory = null;
 }

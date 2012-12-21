@@ -2,7 +2,7 @@ package com.almende.cape.agent.demo;
 
 import com.almende.eve.agent.Agent;
 
-public class testAgent extends Agent {
+public class TestAgent extends Agent {
 
 	@Override
 	public String getDescription() {
