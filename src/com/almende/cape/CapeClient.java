@@ -7,7 +7,7 @@ import com.almende.cape.handler.NotificationHandler;
 import com.almende.cape.handler.StateChangeHandler;
 import com.almende.eve.agent.AgentFactory;
 import com.almende.eve.context.MemoryContextFactory;
-import com.almende.eve.service.xmpp.XmppService;
+import com.almende.eve.transport.xmpp.XmppService;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
@@ -44,7 +44,7 @@ public class CapeClient {
 		String service = host;
 		XmppService xmppService = new XmppService(factory);
 		xmppService.init(host, port, service);
-		factory.addService(xmppService);
+		factory.addTransportService(xmppService);
 	}
 	
 	/**
@@ -65,7 +65,7 @@ public class CapeClient {
 		}
 		
 		// connect to xmpp server
-		XmppService xmppService = (XmppService) factory.getService("xmpp");
+		XmppService xmppService = (XmppService) factory.getTransportService("xmpp");
 		if (xmppService == null) {
 			throw new Exception("No XMPP Service configured.");
 		}
@@ -85,7 +85,7 @@ public class CapeClient {
 			agent.removeStateChangeHandlers();
 			
 			// disconnect from xmpp service
-			XmppService xmppService = (XmppService) factory.getService("xmpp");
+			XmppService xmppService = (XmppService) factory.getTransportService("xmpp");
 			if (xmppService == null) {
 				throw new Exception("No XMPP Service configured.");
 			}

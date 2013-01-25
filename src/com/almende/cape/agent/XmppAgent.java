@@ -3,8 +3,8 @@ package com.almende.cape.agent;
 import com.almende.eve.agent.Agent;
 import com.almende.eve.agent.AgentFactory;
 import com.almende.eve.context.Context;
-import com.almende.eve.json.annotation.Name;
-import com.almende.eve.service.xmpp.XmppService;
+import com.almende.eve.agent.annotation.Name;
+import com.almende.eve.transport.xmpp.XmppService;
 
 /**
  * The abstract class XmppAgent contains methods to set a password and 
@@ -50,7 +50,7 @@ public abstract class XmppAgent extends Agent {
 	// TODO: agent must automatically connect on server startup 
 	public void connect() throws Exception {
 		AgentFactory factory = getAgentFactory();
-		XmppService service = (XmppService) factory.getService("xmpp");
+		XmppService service = (XmppService) factory.getTransportService("xmpp");
 		if (service != null) {
 			String username = getId();
 			String password = (String) getContext().get("password");
@@ -72,7 +72,7 @@ public abstract class XmppAgent extends Agent {
 	 */
 	public void disconnect() throws Exception {
 		AgentFactory factory = getAgentFactory();
-		XmppService service = (XmppService) factory.getService("xmpp");
+		XmppService service = (XmppService) factory.getTransportService("xmpp");
 		if (service != null) {
 			service.disconnect(getId());
 		}

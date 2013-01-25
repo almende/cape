@@ -21,8 +21,8 @@ import org.neo4j.kernel.Uniqueness;
 
 import com.almende.cape.DB;
 import com.almende.eve.agent.AgentFactory;
-import com.almende.eve.json.annotation.Name;
-import com.almende.eve.service.xmpp.XmppService;
+import com.almende.eve.agent.annotation.Name;
+import com.almende.eve.transport.xmpp.XmppService;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -128,7 +128,7 @@ public class ContactAgent extends com.almende.eve.agent.Agent {
 	        @Name("password") String password) throws Exception {
 	    AgentFactory factory = getAgentFactory();
 
-	    XmppService service = (XmppService) factory.getService("xmpp");
+	    XmppService service = (XmppService) factory.getTransportService("xmpp");
 	    if (service != null) {
 	        service.connect(getId(), username, password);
 	    }
@@ -139,7 +139,7 @@ public class ContactAgent extends com.almende.eve.agent.Agent {
 
 	public void xmppDisconnect() throws Exception {
 	    AgentFactory factory = getAgentFactory();
-	    XmppService service = (XmppService) factory.getService("xmpp");
+	    XmppService service = (XmppService) factory.getTransportService("xmpp");
 	    if (service != null) {
 	        service.disconnect(getId());
 	    }

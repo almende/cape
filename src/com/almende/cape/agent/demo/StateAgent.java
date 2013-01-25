@@ -5,10 +5,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.almende.cape.agent.XmppAgent;
-import com.almende.eve.json.JSONRequest;
-import com.almende.eve.json.annotation.Name;
-import com.almende.eve.json.annotation.Required;
-import com.almende.eve.json.jackson.JOM;
+import com.almende.eve.rpc.jsonrpc.JSONRequest;
+import com.almende.eve.agent.annotation.Name;
+import com.almende.eve.agent.annotation.Required;
+import com.almende.eve.rpc.jsonrpc.jackson.JOM;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class StateAgent extends XmppAgent {

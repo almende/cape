@@ -10,8 +10,8 @@ import org.neo4j.graphdb.index.Index;
 
 import com.almende.cape.DB;
 import com.almende.cape.entity.DataSource;
-import com.almende.eve.json.annotation.Name;
-import com.almende.eve.json.annotation.Required;
+import com.almende.eve.agent.annotation.Name;
+import com.almende.eve.agent.annotation.Required;
 
 public class MerlinAgent extends XmppAgent {
 	// TODO: move the storage of the data to a flat table database,

@@ -27,7 +27,7 @@ public class TestCapeClient {
 					System.out.println("Notification: " + message);
 				}
 			});
-			
+
 			cape.onStateChange("location", new StateChangeHandler() {
 				@Override
 				public void onChange(Object state) {
