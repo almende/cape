@@ -1,0 +1,88 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.almende.cape</groupId>
+		<artifactId>cape</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</parent>
+
+	<artifactId>cape-server</artifactId>
+	<packaging>war</packaging>
+
+	<properties>
+    <cape.server.finalName>cape</cape.server.finalName>
+
+		<neo4j.version>1.9.M01</neo4j.version>
+		<jetty.version>8.1.8.v20121106</jetty.version>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>com.almende.cape</groupId>
+			<artifactId>cape-client</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+
+		<!-- <dependency> <groupId>org.neo4j</groupId> <artifactId>neo4j</artifactId> 
+			<version>${neo4j.version}</version> </dependency> -->
+		<dependency>
+			<groupId>org.neo4j.app</groupId>
+			<artifactId>neo4j-server</artifactId>
+			<version>${neo4j.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.mortbay.jetty</groupId>
+			<artifactId>jetty-maven-plugin</artifactId>
+			<version>${jetty.version}</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+	  <finalName>${cape.server.finalName}</finalName>
+
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.mortbay.jetty</groupId>
+					<artifactId>jetty-maven-plugin</artifactId>
+					<version>${jetty.version}</version>
+					<configuration>
+						<scanIntervalSeconds>10</scanIntervalSeconds>
+						<scanTargets>
+							<scanTarget>src/test/webapp</scanTarget>
+						</scanTargets>
+						<webAppSourceDirectory>${basedir}/src/main/webapp</webAppSourceDirectory>
+						<webApp>
+							<contextPath>/${cape.server.finalName}</contextPath>
+							<descriptor>src/main/webapp/WEB-INF/web.xml</descriptor>
+						</webApp>
+					</configuration>
+
+					<executions>
+						<execution>
+							<id>start-jetty</id>
+							<phase>pre-integration-test</phase>
+							<goals>
+								<goal>run</goal>
+							</goals>
+							<configuration>
+								<scanIntervalSeconds>0</scanIntervalSeconds>
+								<daemon>true</daemon>
+							</configuration>
+						</execution>
+						<execution>
+							<id>stop-jetty</id>
+							<phase>post-integration-test</phase>
+							<goals>
+								<goal>stop</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
+</project>

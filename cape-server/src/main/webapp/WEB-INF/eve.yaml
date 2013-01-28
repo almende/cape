@@ -1,0 +1,28 @@
+# Eve settings
+
+services:
+- class: XmppService
+  host: openid.almende.org
+  port: 5222
+  service: openid.almende.org
+
+# context settings (for persistency)
+context:
+  class: FileContextFactory
+  path: .eveagents
+
+# scheduler settings (for tasks)
+scheduler:
+  class: RunnableScheduler
+
+# create agents when running the first time
+bootstrap:
+  agents:
+    merlin: com.almende.cape.agent.MerlinAgent
+
+
+# cape specific settings
+cape:
+  merlin:
+    password: merlin
+
