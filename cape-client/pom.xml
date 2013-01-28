@@ -19,13 +19,7 @@
       <groupId>com.almende.eve</groupId>
       <artifactId>eve-core</artifactId>
       <version>${eve.version}</version>
-    </dependency>
-    
-    <dependency>
-      <groupId>org.neo4j</groupId>
-      <artifactId>neo4j</artifactId>
-      <version>${neo4j.version}</version>
-    </dependency>
+    </dependency>    
   </dependencies>
 
 </project>
