@@ -1,0 +1,14 @@
+# eclipse
+.classpath
+.project
+.settings
+
+# maven
+target
+
+# android
+bin
+gen
+local.properties
+project.properties
+
