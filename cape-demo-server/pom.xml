@@ -7,11 +7,11 @@
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>cape-server</artifactId>
+	<artifactId>cape-demo-server</artifactId>
 	<packaging>war</packaging>
 
 	<properties>
-    <cape.server.finalName>cape</cape.server.finalName>
+		<cape.server.finalName>cape</cape.server.finalName>
 
 		<neo4j.version>1.9.M01</neo4j.version>
 		<jetty.version>8.1.8.v20121106</jetty.version>
@@ -31,6 +31,12 @@
 			<artifactId>neo4j-server</artifactId>
 			<version>${neo4j.version}</version>
 		</dependency>
+		
+		<dependency>
+			<groupId>com.google.collections</groupId>
+			<artifactId>google-collections</artifactId>
+			<version>1.0</version>
+		</dependency>
 
 		<dependency>
 			<groupId>org.mortbay.jetty</groupId>
@@ -41,7 +47,7 @@
 	</dependencies>
 
 	<build>
-	  <finalName>${cape.server.finalName}</finalName>
+		<finalName>${cape.server.finalName}</finalName>
 
 		<pluginManagement>
 			<plugins>
