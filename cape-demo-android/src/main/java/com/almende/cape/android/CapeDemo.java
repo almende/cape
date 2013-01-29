@@ -35,7 +35,7 @@ public class CapeDemo extends Activity {
 			public void onClick(View view) {
 				final String username = txtUsername.getText().toString();
 				final String password = txtPassword.getText().toString();
-				new ConnectTask().execute(username, password);
+				new CapeConnect().execute(username, password);
 			}
         });
         
@@ -43,7 +43,7 @@ public class CapeDemo extends Activity {
         btnDisconnect.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				new DisconnectTask().execute();
+				new CapeDisconnect().execute();
 			}
         });
 
@@ -64,22 +64,25 @@ public class CapeDemo extends Activity {
         return true;
     }
     
-    class ConnectTask extends AsyncTask<String, String, String> {
+    class CapeConnect extends AsyncTask<String, String, String> {
     	@Override
     	protected String doInBackground(String... params) {
     		try {
     			String username = params[0];
     			String password = params[1];
     			
+    			// login to cape
     			System.out.println("connecting user " + username);
     			cape.login(username, password);
-
     			cape.onNotification(new NotificationHandler() {
 					@Override
 					public void onNotification(String message) {
 						System.out.println("Notification: " + message);
 					}
 				});
+    			
+    			// start location simulation
+    			locationSimulation.start(username, password);
     			
     			return "connected";
     		} catch (Exception e) {
@@ -109,14 +112,18 @@ public class CapeDemo extends Activity {
     	}
     }
     
-    class DisconnectTask extends AsyncTask<Void, String, String> {
+    class CapeDisconnect extends AsyncTask<Void, String, String> {
 		@Override
 		protected String doInBackground(Void... params) {
 			try {
     			System.out.println("disconnecting...");
 
+    			// logout from cape
     			cape.logout();
-
+    			
+    			// stop location simulation
+    			locationSimulation.stop();
+    			
     			return "disconnected";
     		} catch (Exception e) {
     			e.printStackTrace();
@@ -175,4 +182,5 @@ public class CapeDemo extends Activity {
     }
     
     private CapeClient cape = new CapeClient();
+    private LocationSimulation locationSimulation = new LocationSimulation();
 }

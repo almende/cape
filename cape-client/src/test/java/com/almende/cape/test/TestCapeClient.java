@@ -18,8 +18,8 @@ public class TestCapeClient {
 			
 			ArrayNode contacts = cape.getContacts(null);
 			System.out.println("contacts:" + contacts);
-			
-			cape.sendNotification("gloria", "hello gloria!");
+
+			//cape.sendNotification("gloria", "hello gloria!");
 			
 			cape.onNotification(new NotificationHandler() {
 				@Override

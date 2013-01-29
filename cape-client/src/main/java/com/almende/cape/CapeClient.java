@@ -1,7 +1,5 @@
 package com.almende.cape;
 
-import java.util.Scanner;
-
 import com.almende.cape.agent.CapeClientAgent;
 import com.almende.cape.handler.NotificationHandler;
 import com.almende.cape.handler.StateChangeHandler;
@@ -15,36 +13,29 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
  * CAPE Client interface
  */
 public class CapeClient {
-	public static void main(String[] args) {
-		try {
-			// TODO: request username and password in console
-			CapeClient cape = new CapeClient();
-			cape.login("alex", "alex");
-
-			System.out.println("Press ENTER to quit");
-			Scanner scanner = new Scanner(System.in);
-	        scanner.nextLine();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
 	/**
 	 * Constructor
 	 * @throws Exception
 	 */
 	public CapeClient() {
 		// TODO: read configuration from config file
-		factory = new AgentFactory();		
-		
-		factory.setContextFactory(new MemoryContextFactory(factory));
+		factory = AgentFactory.getInstance();
+		if (factory == null) {
+			try {
+				factory = AgentFactory.createInstance();
 
-		String host = "openid.almende.org";
-		Integer port = 5222;
-		String service = host;
-		XmppService xmppService = new XmppService(factory);
-		xmppService.init(host, port, service);
-		factory.addTransportService(xmppService);
+				factory.setContextFactory(new MemoryContextFactory(factory));
+				
+				String host = "openid.almende.org";
+				Integer port = 5222;
+				String service = host;
+				XmppService xmppService = new XmppService(factory);
+				xmppService.init(host, port, service);
+				factory.addTransportService(xmppService);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	/**
@@ -62,14 +53,13 @@ public class CapeClient {
 		if (agent == null) {
 			agent = (CapeClientAgent) factory.createAgent(
 					CapeClientAgent.class, username);
+			
+			String resource = "client";
+			agent.setAccount(username, password, resource);
 		}
 		
-		// connect to xmpp server
-		XmppService xmppService = (XmppService) factory.getTransportService("xmpp");
-		if (xmppService == null) {
-			throw new Exception("No XMPP Service configured.");
-		}
-		xmppService.connect(username, username, password);
+		// connect to xmpp service
+		agent.connect();
 		
 		// no exceptions thrown
 		this.agent = agent;
@@ -81,15 +71,12 @@ public class CapeClient {
 	 */
 	public void logout() throws Exception {
 		if (agent != null) {
+			// remove any handlers
 			agent.removeNotificationHandler();
 			agent.removeStateChangeHandlers();
 			
 			// disconnect from xmpp service
-			XmppService xmppService = (XmppService) factory.getTransportService("xmpp");
-			if (xmppService == null) {
-				throw new Exception("No XMPP Service configured.");
-			}
-			xmppService.disconnect(agent.getId());
+			agent.disconnect();
 
 			agent.destroy();
 			agent = null;

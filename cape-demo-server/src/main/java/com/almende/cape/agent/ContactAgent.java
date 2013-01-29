@@ -29,7 +29,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 
-public class ContactAgent extends com.almende.eve.agent.Agent {
+public class ContactAgent extends CapeContactAgent {
 	
 	static final ObjectMapper om = new ObjectMapper();
 

@@ -14,7 +14,7 @@ import com.almende.eve.agent.annotation.Name;
 import com.almende.eve.agent.annotation.Required;
 import com.almende.eve.config.Config;
 
-public class MerlinAgent extends XmppAgent {
+public class MerlinAgent extends CapeAgent {
 	// TODO: move the storage of the data to a flat table database,
 	//       having two indexes (userId and dataSource) to improve performance?
 	
@@ -22,16 +22,20 @@ public class MerlinAgent extends XmppAgent {
 	public void create () {
 		try {
 			Config config = getAgentFactory().getConfig();
+			String username = config.get("cape", "merlin", "username");
 			String password = config.get("cape", "merlin", "password");
+			String resource = config.get("cape", "merlin", "resource");
 			
-			if (password != null) {
-				setPassword(password);
-				connect();
+			if (username == null) {
+				throw new IllegalArgumentException(
+						"Configuration parameter cape.merlin.username missing.");
 			}
-			else {
+			if (password == null) {
 				throw new IllegalArgumentException(
 						"Configuration parameter cape.merlin.password missing.");
 			}
+			
+			setAccount(username, password, resource);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

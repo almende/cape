@@ -4,26 +4,28 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.almende.eve.rpc.jsonrpc.JSONRequest;
 import com.almende.eve.agent.annotation.Name;
 import com.almende.eve.agent.annotation.Required;
+import com.almende.eve.rpc.jsonrpc.JSONRequest;
 import com.almende.eve.rpc.jsonrpc.jackson.JOM;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-public class StateAgent extends CapeStateAgent {
+public class LocationAgent extends CapeStateAgent {
 	/**
 	 * Get the current state
 	 * @param state    Available values: "location"
 	 * @return
+	 * @throws Exception 
 	 */
 	@Override
-	public Object getState(@Name("state") String state) {
+	public Object getState(@Name("state") String state) throws Exception {
 		if (state.equals("location")) {
 			return getContext().get("location");
 		}
 		else {
-			// TODO: implement other states
-			return null;
+			// no information available for other states
+			throw new Exception("No information available for state '" + state + "', " +
+					"only information for 'location' is available.");
 		}
 	}
 	
@@ -56,7 +58,7 @@ public class StateAgent extends CapeStateAgent {
 		params.put("location", JOM.getInstance().convertValue(location, ObjectNode.class));
 		trigger("change", params);
 	}
-	
+
 	/**
 	 * Start simulation of the location
 	 */
@@ -109,13 +111,12 @@ public class StateAgent extends CapeStateAgent {
 		} catch (Exception e) {
 		}
 	}
+
 	
 	@Override
 	public String getDescription() {
-		return "Hi there, I'm a demo agent for Cape, providing state information! " +
-				"Use startSimulation() and stopSimulation() to simulate a " +
-				"changing location, and use getState(\"location\") to retrieve " +
-				"the current location.";
+		return "The LocationAgent offers location information, " +
+				"retrieved from a mobile phone. It can also simulate a location";
 	}
 
 	@Override

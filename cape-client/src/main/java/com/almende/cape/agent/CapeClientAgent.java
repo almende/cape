@@ -6,17 +6,13 @@ import java.util.logging.Logger;
 
 import com.almende.cape.handler.NotificationHandler;
 import com.almende.cape.handler.StateChangeHandler;
-import com.almende.eve.agent.Agent;
 import com.almende.eve.agent.annotation.Name;
 import com.almende.eve.agent.annotation.Required;
 import com.almende.eve.rpc.jsonrpc.jackson.JOM;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-public class CapeClientAgent extends Agent {
-	// TODO: do not hard-code the merlin agent url.
-    private static String MERLIN_URL = "xmpp:merlin@openid.almende.org"; 
-	
+public class CapeClientAgent extends CapeAgent {
 	/**
 	 * Retrieve contacts
 	 * @param contactFilter
@@ -86,15 +82,8 @@ public class CapeClientAgent extends Agent {
 		
 		logger.info("Registering dialog support at the MerlinAgent");
 		
-		String method = "register";
-		ObjectNode params = JOM.createObjectNode();
-		ObjectNode dataSource = JOM.createObjectNode();
-		dataSource.put("userId", getId());
-		dataSource.put("agentUrl", getXmppUrl());
-		dataSource.put("dataType", "dialog");
-		params.put("dataSource", dataSource);
-		send(MERLIN_URL, method, params);
-
+		register("dialog");
+		
 		logger.info("Registered dialog support at the MerlinAgent");
 	}
 
@@ -106,14 +95,7 @@ public class CapeClientAgent extends Agent {
 		if (notificationHandlers.containsKey(getId())) {
 			logger.info("Unregistering dialog support at the MerlinAgent");
 			
-			String method = "unregister";
-			ObjectNode params = JOM.createObjectNode();
-			ObjectNode dataSource = JOM.createObjectNode();
-			dataSource.put("userId", getId());
-			dataSource.put("agentUrl", getXmppUrl());
-			dataSource.put("dataType", "dialog");
-			params.put("dataSource", dataSource);
-			send(MERLIN_URL, method, params);
+			unregister("dialog");
 
 			logger.info("Unregistered dialog support at the MerlinAgent");			
 
@@ -225,19 +207,6 @@ public class CapeClientAgent extends Agent {
 		return null;
 	}
 
-	/**
-	 * Get the xmpp url of this agent. Will return null if there is no xmpp url.
-	 * @return url
-	 */
-	private String getXmppUrl() {
-		for (String url : getUrls()) {
-			if (url.startsWith("xmpp:")) {
-				return url;
-			}
-		}
-		return null;
-	}
-	
 	@Override
 	public String getDescription() {
 		return "CAPE Client Agent";

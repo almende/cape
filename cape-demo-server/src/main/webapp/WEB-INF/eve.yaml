@@ -24,5 +24,6 @@ bootstrap:
 # cape specific settings
 cape:
   merlin:
+    username: merlin
     password: merlin
 
