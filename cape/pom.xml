@@ -13,7 +13,21 @@
     <name>Almende BV</name>
     <url>http://www.almende.com/</url>
   </organization>
-  
+
+  <modules>
+          <module>../cape-client</module>
+          <module>../cape-demo-android</module>
+          <module>../cape-demo-server</module>
+  </modules>
+
+        <repositories>
+                <repository>
+                        <id>eve</id>
+                        <url>https://raw.github.com/almende/maven/master/</url>
+		 </repository>
+	</repositories>
+
+
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.scm.version>1.8.1</maven.scm.version>
