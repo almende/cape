@@ -12,7 +12,7 @@ import com.almende.eve.rpc.jsonrpc.jackson.JOM;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-public class CapeClientAgent extends CapeAgent {
+public class CapeClientAgent extends CapeDialogAgent {
 	/**
 	 * Retrieve contacts
 	 * @param contactFilter
@@ -79,12 +79,6 @@ public class CapeClientAgent extends CapeAgent {
 	public void setNotificationHandler(NotificationHandler handler) 
 			throws Exception {
 		notificationHandlers.put(getId(), handler);
-		
-		logger.info("Registering dialog support at the MerlinAgent");
-		
-		register("dialog");
-		
-		logger.info("Registered dialog support at the MerlinAgent");
 	}
 
 	/**
@@ -93,25 +87,26 @@ public class CapeClientAgent extends CapeAgent {
 	 */
 	public void removeNotificationHandler() throws Exception {
 		if (notificationHandlers.containsKey(getId())) {
-			logger.info("Unregistering dialog support at the MerlinAgent");
-			
-			unregister("dialog");
-
-			logger.info("Unregistered dialog support at the MerlinAgent");			
-
 			notificationHandlers.remove(getId());
 		}
 	}
 	
 	/**
 	 * Receive a notification and dispatch it to the attached notification 
-	 * handler. If no notification handler is attached, nothing happens.
+	 * handler. If no notification handler is attached, an exception will be
+	 * thrown.
 	 * @param message
+	 * @throws Exception 
 	 */
-	public void onNotification(@Name("message") String message) {
+	@Override
+	public void onNotification(@Name("message") String message) throws Exception {
 		NotificationHandler handler = notificationHandlers.get(getId());
 		if (handler != null) {
 			handler.onNotification(message);			
+		}
+		else {
+			throw new Exception ("Cannot deliver notification: " +
+					"no notification handler set.");
 		}
 	}
 	
@@ -130,11 +125,15 @@ public class CapeClientAgent extends CapeAgent {
 		logger.info("Registering state handler for userId=" + userId + ", state=" + state);
 		String agentUrl = findDataSource(userId, "state");
 
-		// TODO: actually subscribe to the provided state (for example "location")
-		
 		logger.info("Found agent providing this state, url=" + agentUrl + ". subscribing...");
 		subscribe(agentUrl, "change", "onStateChange");
+
+		if (stateChangeHandlers.containsKey(agentUrl)) {
+			throw new Exception ("A state change handler for userId " + userId +
+					" and state " + state + " already exists.");
+		}
 		
+		// TODO: do not differentiate by agentUrl, but by a subscription id.
 		stateChangeHandlers.put(agentUrl, handler);
 
 		logger.info("Registered state handler");
@@ -174,9 +173,15 @@ public class CapeClientAgent extends CapeAgent {
 	public void onStateChange(@Name("agent") String agent,
 	        @Name("event") String event, 
 	        @Required(false) @Name("params") ObjectNode params) {
+		/* FIXME: only trigger the corresponding StateChangeHander, not all
+		// (needs matching by subscription id)
 		StateChangeHandler handler = stateChangeHandlers.get(agent);
 		if (handler != null) {
 			handler.onChange(params);
+		}
+		*/
+		for (String agentUrl : stateChangeHandlers.keySet()) {
+			stateChangeHandlers.get(agentUrl).onChange(params);
 		}
 	}
 	
@@ -216,7 +221,7 @@ public class CapeClientAgent extends CapeAgent {
 	public String getVersion() {
 		return "0.1";
 	}
-
+	
 	// TODO: the notification handler and stateChange handlers are a singleton 
 	//       per user right now, as we cannot have a single, continuously 
 	//       instantiated agent: the AgentFactory  will instantiate a new 

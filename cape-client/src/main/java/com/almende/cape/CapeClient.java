@@ -23,7 +23,7 @@ public class CapeClient {
 		if (factory == null) {
 			try {
 				factory = AgentFactory.createInstance();
-
+				
 				factory.setContextFactory(new MemoryContextFactory(factory));
 				
 				String host = "openid.almende.org";
