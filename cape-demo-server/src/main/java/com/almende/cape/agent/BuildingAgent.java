@@ -69,7 +69,7 @@ public class BuildingAgent extends CapeAgent {
 			@Name("userId") String userId, 
 			@Name("AgentUrl") String agentUrl) throws Exception {
 		// unregister first to prevent double entries
-		unregisterUser(userId, agentUrl);
+		unregisterUser(userId);
 		
 		// subscribe to the agents change location event.
 		String subscriptionId = subscribe(agentUrl, "change", "onChange");
@@ -93,12 +93,9 @@ public class BuildingAgent extends CapeAgent {
 	/**
 	 * Unregister an existing user from the building
 	 * @param userId
-	 * @param agentUrl
 	 * @throws Exception
 	 */
-	public void unregisterUser(
-			@Name("userId") String userId, 
-			@Name("AgentUrl") String agentUrl) throws Exception{
+	public void unregisterUser(@Name("userId") String userId) throws Exception{
 		List<Person> removedUsers = new ArrayList<Person>(); 
 		
 		// add the user to the list with registered users
@@ -108,7 +105,7 @@ public class BuildingAgent extends CapeAgent {
 			int i = 0;
 			while (i < users.size()) {
 				Person user = users.get(i);
-				if (user.agentUrl.equals(agentUrl)) {
+				if (user.userId.equals(userId)) {
 					removedUsers.add(user);
 					users.remove(user);
 				}
