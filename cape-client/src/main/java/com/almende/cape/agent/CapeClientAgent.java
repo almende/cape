@@ -203,33 +203,6 @@ public class CapeClientAgent extends CapeDialogAgent {
 		}
 	}
 	
-	/**
-	 * Find a datasource for a specific userid and datatype
-	 * @param userId
-	 * @param dataType
-	 * @return contactAgentUrl
-	 * @throws Exception
-	 */
-	private String findDataSource(String userId, String dataType) throws Exception {
-		String method = "find";
-		ObjectNode params = JOM.createObjectNode();
-		params.put("userId", userId);
-		params.put("dataType", dataType);
-
-		logger.info("Requesting the MerlinAgent for a dataSource with userId=" + 
-				userId + " and dataType=" + dataType);
-
-		ArrayNode contactSources = send(MERLIN_URL, method, params, ArrayNode.class);
-		if (contactSources.size() > 0) {
-			ObjectNode contactSource = (ObjectNode) contactSources.get(0);
-
-			logger.info("Retrieved dataSource from MerlinAgent: " + contactSource);
-
-			return contactSource.get("agentUrl").asText();
-		}
-		return null;
-	}
-	
 	@Override
 	public String getDescription() {
 		return "CAPE Client Agent";

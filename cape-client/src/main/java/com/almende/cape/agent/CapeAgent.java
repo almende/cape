@@ -1,5 +1,7 @@
 package com.almende.cape.agent;
 
+import java.util.logging.Logger;
+
 import com.almende.eve.agent.Agent;
 import com.almende.eve.agent.AgentFactory;
 import com.almende.eve.context.Context;
@@ -7,6 +9,7 @@ import com.almende.eve.agent.annotation.Name;
 import com.almende.eve.agent.annotation.Required;
 import com.almende.eve.rpc.jsonrpc.jackson.JOM;
 import com.almende.eve.transport.xmpp.XmppService;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
@@ -200,6 +203,33 @@ public abstract class CapeAgent extends Agent {
 			send(MERLIN_URL, method, params);
 		}
 	}
+
+	/**
+	 * Find a datasource for a specific userid and datatype
+	 * @param userId
+	 * @param dataType
+	 * @return contactAgentUrl
+	 * @throws Exception
+	 */
+	protected String findDataSource(String userId, String dataType) throws Exception {
+		String method = "find";
+		ObjectNode params = JOM.createObjectNode();
+		params.put("userId", userId);
+		params.put("dataType", dataType);
+
+		logger.info("Requesting the MerlinAgent for a dataSource with userId=" + 
+				userId + " and dataType=" + dataType);
+
+		ArrayNode contactSources = send(MERLIN_URL, method, params, ArrayNode.class);
+		if (contactSources.size() > 0) {
+			ObjectNode contactSource = (ObjectNode) contactSources.get(0);
+
+			logger.info("Retrieved dataSource from MerlinAgent: " + contactSource);
+
+			return contactSource.get("agentUrl").asText();
+		}
+		return null;
+	}
 	
 	/**
 	 * Get the xmpp url of this agent. Will return null if there is no xmpp url.
@@ -213,4 +243,6 @@ public abstract class CapeAgent extends Agent {
 		}
 		return null;
 	}
+	
+	private Logger logger = Logger.getLogger(this.getClass().getSimpleName());
 }
