@@ -138,9 +138,13 @@ public class CapeClientAgent extends CapeDialogAgent {
 					"userId=" + userId);
 		}
 
+		// TODO: should run a process which regularly refreshes the url for the datasource
 		logger.info("Registering state handler for userId=" + userId + ", state=" + state);
 		String agentUrl = findDataSource(userId, "state");
-
+		if (agentUrl == null) {
+			throw new Exception("No agent found providing state information for " +
+					"user " + userId);
+		}
 		logger.info("Found agent providing this state, url=" + agentUrl + ". subscribing...");
 		String subscriptionId = subscribe(agentUrl, "change", "onStateChange");
 
