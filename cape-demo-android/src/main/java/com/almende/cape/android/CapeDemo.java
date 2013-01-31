@@ -68,8 +68,7 @@ public class CapeDemo extends Activity {
         btnUseActualLocation.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				// TODO: implement use actual location
-				logger.info("Use actual location... (to be implemented)");
+				locationSimulation.useActualLocation();
 			}
         });
         
@@ -77,13 +76,11 @@ public class CapeDemo extends Activity {
         btnMoveAway.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				// TODO: implement move away
-				logger.info("Move away... (to be implemented)");
+				locationSimulation.moveAway();
 			}
         });
         
         lblLocation = (TextView) findViewById(R.id.location);
-        
         lblInfo = (TextView) findViewById(R.id.info);
     }
 
@@ -114,6 +111,7 @@ public class CapeDemo extends Activity {
     			
     			// start location simulation
     			locationSimulation.start(username, password, ctx);
+    	        locationSimulation.setLocationLabel(lblLocation);
     			
     			return "connected";
     		} catch (Exception e) {
@@ -138,7 +136,8 @@ public class CapeDemo extends Activity {
 				btnConnect.setVisibility(View.INVISIBLE);
 				btnDisconnect.setVisibility(View.VISIBLE);
 				btnUseActualLocation.setVisibility(View.VISIBLE);
-				btnMoveAway.setVisibility(View.VISIBLE);	
+				btnMoveAway.setVisibility(View.VISIBLE);
+				lblLocation.setVisibility(View.VISIBLE);
     		}
     	}
     }
@@ -181,6 +180,7 @@ public class CapeDemo extends Activity {
 				btnDisconnect.setVisibility(View.INVISIBLE);
 				btnUseActualLocation.setVisibility(View.INVISIBLE);
 				btnMoveAway.setVisibility(View.INVISIBLE);
+				lblLocation.setVisibility(View.INVISIBLE);
     		}
     	}
     }

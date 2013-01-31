@@ -8,12 +8,12 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.widget.TextView;
 
 import com.almende.eve.agent.annotation.Name;
 import com.almende.eve.agent.annotation.Required;
 import com.almende.eve.rpc.jsonrpc.JSONRequest;
 import com.almende.eve.rpc.jsonrpc.jackson.JOM;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class LocationAgent extends CapeStateAgent {
@@ -43,6 +43,7 @@ public class LocationAgent extends CapeStateAgent {
 		public void onProviderDisabled(String provider) {
 		}
 	};
+	private TextView locationLabel = null;
 
 	public void setAndroidContext(Context context) {
 		this.context = context;
@@ -128,6 +129,10 @@ public class LocationAgent extends CapeStateAgent {
 				JOM.getInstance().convertValue(location, ObjectNode.class));
 		trigger("change", params);
 		
+		if (locationLabel != null){
+			locationLabel.setText("Location:"+lat + ":" + lng + " - "+description);
+			locationLabel.invalidate();
+		}
 		System.err.println("Set location:"+lat+":"+lng+"::"+description);
 	}
 
@@ -159,7 +164,7 @@ public class LocationAgent extends CapeStateAgent {
 
 		updateLocation();
 
-		long delay = Math.round((10 + 10 * Math.random()) * 1000); // 10-20 sec
+		long delay = Math.round((10 * Math.random()) * 1000); // 0-10 sec
 		JSONRequest request = new JSONRequest("onSimulate", null);
 		String taskId = getScheduler().createTask(request, delay);
 		getContext().put("taskId", taskId);
@@ -169,23 +174,22 @@ public class LocationAgent extends CapeStateAgent {
 	 * Update the location based on a simple time based algorithm: The location
 	 * will circle around Rotterdam once an hour.
 	 */
+	@SuppressWarnings("unchecked")
 	public void updateLocation() {
 
 		// Move from current location for a couple of meters towards the
 		// north-west.....
 		try {
-			String locationJSON = "";
+			HashMap<String, Object> location = null;
+			//TODO: default naar Almende's locatie.
 			if (getContext().containsKey("location")) {
-				locationJSON = (String) getContext().get("location");
+				location = (HashMap<String, Object>) getContext().get("location");
 			}
 
-			ObjectMapper om = new ObjectMapper();
-			ObjectNode location = (ObjectNode) om.readTree(locationJSON);
-
-			Double lat = location.get("lat").asDouble();
-			Double lng = location.get("lng").asDouble();
+			Double lat = (Double) location.get("lat");
+			Double lng = (Double) location.get("lng");
 			
-			lat+=0.1;
+			lat+=0.05;
 			lng-=0.01;
 			//
 			// Calendar calendar = Calendar.getInstance();
@@ -197,8 +201,9 @@ public class LocationAgent extends CapeStateAgent {
 			// Double lat = 51.9217 + 0.4 * Math.sin(t);
 			// Double lng = 4.4811 + 0.4 * Math.cos(t);
 
-			setLocation(lat, lng, null);
+			setLocation(lat, lng, "Simulated new location");
 		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -212,4 +217,9 @@ public class LocationAgent extends CapeStateAgent {
 	public String getVersion() {
 		return "0.1";
 	}
+
+	public void setLocationLabel(TextView lblLocation) {
+		this.locationLabel  = lblLocation;
+	}
+
 }
