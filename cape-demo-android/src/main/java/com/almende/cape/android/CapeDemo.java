@@ -131,13 +131,12 @@ public class CapeDemo extends Activity {
 
 			btnConnect.setEnabled(true);
     		if (state.equals("connected")) {
-				txtUsername.setVisibility(View.INVISIBLE);
-				txtPassword.setVisibility(View.INVISIBLE);
-				btnConnect.setVisibility(View.INVISIBLE);
-				btnDisconnect.setVisibility(View.VISIBLE);
-				btnUseActualLocation.setVisibility(View.VISIBLE);
-				btnMoveAway.setVisibility(View.VISIBLE);
-				lblLocation.setVisibility(View.VISIBLE);
+    			txtUsername.setEnabled(false);
+    			txtPassword.setEnabled(false);
+    			btnConnect.setEnabled(false);
+    			btnDisconnect.setEnabled(true);
+    			btnUseActualLocation.setEnabled(true);
+    			btnMoveAway.setEnabled(true);
     		}
     	}
     }
@@ -174,13 +173,12 @@ public class CapeDemo extends Activity {
 			
 			btnDisconnect.setEnabled(true);
     		if (state.equals("disconnected")) {
-				txtUsername.setVisibility(View.VISIBLE);
-				txtPassword.setVisibility(View.VISIBLE);
-				btnConnect.setVisibility(View.VISIBLE);
-				btnDisconnect.setVisibility(View.INVISIBLE);
-				btnUseActualLocation.setVisibility(View.INVISIBLE);
-				btnMoveAway.setVisibility(View.INVISIBLE);
-				lblLocation.setVisibility(View.INVISIBLE);
+				txtUsername.setEnabled(true);
+    			txtPassword.setEnabled(true);
+    			btnConnect.setEnabled(true);
+    			btnDisconnect.setEnabled(false);
+    			btnUseActualLocation.setEnabled(false);
+    			btnMoveAway.setEnabled(false);
     		}
     	}
     }
