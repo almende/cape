@@ -31,11 +31,24 @@
         android:text="@string/disconnect" />
 
     <Button
-        android:id="@+id/getContacts"
+        android:id="@+id/useActualLocation"
         android:visibility="invisible"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/get_contacts" />
+        android:text="@string/use_actual_location" />
+    
+    <Button
+        android:id="@+id/moveAway"
+        android:visibility="invisible"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/move_away" />
+    
+    <TextView
+        android:id="@+id/location"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1" />
     
     <TextView
         android:id="@+id/info"
