@@ -1,5 +1,8 @@
 package com.almende.cape.android;
 
+
+import java.util.logging.Logger;
+
 import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
@@ -75,14 +78,16 @@ public class CapeDemo extends Activity {
     			String password = params[1];
     			
     			// login to cape
-    			System.out.println("connecting user " + username);
+    			logger.info("connecting user " + username);
     			cape.login(username, password);
     			cape.onNotification(new NotificationHandler() {
 					@Override
 					public void onNotification(String message) {
-						System.out.println("Notification: " + message);
+						logger.info("Notification: " + message);
 					}
 				});
+    			
+    			logger.info("connected");
     			
     			// start location simulation
     			locationSimulation.start(username, password, ctx);
@@ -101,7 +106,6 @@ public class CapeDemo extends Activity {
 		
 		@Override
     	protected void onPostExecute(String state) {
-    		System.out.println(state);
 			lblInfo.setText(state);
 
 			btnConnect.setEnabled(true);
@@ -119,10 +123,12 @@ public class CapeDemo extends Activity {
 		@Override
 		protected String doInBackground(Void... params) {
 			try {
-    			System.out.println("disconnecting...");
+				logger.info("disconnecting...");
 
     			// logout from cape
     			cape.logout();
+    			
+    			logger.info("disconnected");
     			
     			// stop location simulation
     			locationSimulation.stop();
@@ -141,7 +147,6 @@ public class CapeDemo extends Activity {
 		
 		@Override
     	protected void onPostExecute(String state) {
-			System.out.println(state);
 			lblInfo.setText(state);
 			
 			btnDisconnect.setEnabled(true);
@@ -159,10 +164,10 @@ public class CapeDemo extends Activity {
 		@Override
 		protected String doInBackground(Void... params) {
 			try {
-    			System.out.println("getting contacts...");
+				logger.info("getting contacts...");
 
     			ArrayNode contacts = cape.getContacts(null);
-    			System.out.println("contacts: " + contacts);
+    			logger.info("contacts retrieved: " + contacts);
     			
     			return "contacts retrieved";
     		} catch (Exception e) {
@@ -178,7 +183,6 @@ public class CapeDemo extends Activity {
 		
 		@Override
     	protected void onPostExecute(String state) {
-			System.out.println(state);
 			lblInfo.setText(state);
 			btnGetContacts.setEnabled(true);
     	}
@@ -186,4 +190,6 @@ public class CapeDemo extends Activity {
     
     private CapeClient cape = new CapeClient();
     private LocationSimulation locationSimulation = new LocationSimulation();
+    
+    private Logger logger = Logger.getLogger(this.getClass().getSimpleName());;
 }
