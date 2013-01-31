@@ -53,7 +53,7 @@ public class LocationAgent extends CapeStateAgent {
 			throw new Exception("Android App context is not yet set!");
 		}
 		// Acquire a reference to the system Location Manager
-		LocationManager locationManager = (LocationManager) context
+		locationManager = (LocationManager) context
 				.getSystemService(Context.LOCATION_SERVICE);
 
 		// Register the listener with the Location Manager to receive location
@@ -73,7 +73,9 @@ public class LocationAgent extends CapeStateAgent {
 	}
 
 	public void stopSensor() {
-		locationManager.removeUpdates(locationListener);
+		if (locationManager != null && locationListener != null){
+			locationManager.removeUpdates(locationListener);
+		}
 	}
 
 	/**
