@@ -1,17 +1,18 @@
 package com.almende.cape.android;
 
-import com.almende.cape.CapeClient;
-import com.almende.cape.handler.NotificationHandler;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-
+import android.app.Activity;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.app.Activity;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import com.almende.cape.CapeClient;
+import com.almende.cape.handler.NotificationHandler;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 
 public class CapeDemo extends Activity {
 	private EditText txtUsername;
@@ -20,11 +21,13 @@ public class CapeDemo extends Activity {
 	private Button btnDisconnect;
 	private Button btnGetContacts;
 	private TextView lblInfo;
+	Context ctx = null;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cape_demo);
+        ctx = this;
 
         txtUsername = (EditText) findViewById(R.id.username);
         txtPassword = (EditText) findViewById(R.id.password);
@@ -82,7 +85,7 @@ public class CapeDemo extends Activity {
 				});
     			
     			// start location simulation
-    			locationSimulation.start(username, password);
+    			locationSimulation.start(username, password, ctx);
     			
     			return "connected";
     		} catch (Exception e) {

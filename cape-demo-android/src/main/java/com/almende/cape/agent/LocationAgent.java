@@ -19,10 +19,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 public class LocationAgent extends CapeStateAgent {
 	/** Android Application Context, not Eve context! */
 	Context context = null;
-
-	// Acquire a reference to the system Location Manager
-	LocationManager locationManager = (LocationManager) context
-			.getSystemService(Context.LOCATION_SERVICE);
+	LocationManager locationManager = null;
 
 	// Define a listener that responds to location updates
 	LocationListener locationListener = new LocationListener() {
@@ -47,7 +44,7 @@ public class LocationAgent extends CapeStateAgent {
 		}
 	};
 
-	public void setContext(Context context) {
+	public void setAndroidContext(Context context) {
 		this.context = context;
 	}
 
@@ -55,12 +52,16 @@ public class LocationAgent extends CapeStateAgent {
 		if (this.context == null) {
 			throw new Exception("Android App context is not yet set!");
 		}
+		// Acquire a reference to the system Location Manager
+		LocationManager locationManager = (LocationManager) context
+				.getSystemService(Context.LOCATION_SERVICE);
+
 		// Register the listener with the Location Manager to receive location
 		// updates
 		locationManager.requestLocationUpdates(
 				LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
-		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0,
-				0, locationListener);
+		locationManager.requestLocationUpdates(
+				LocationManager.GPS_PROVIDER, 0, 0, locationListener);
 		Location location = locationManager
 				.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
 		try {
@@ -124,6 +125,8 @@ public class LocationAgent extends CapeStateAgent {
 		params.put("location",
 				JOM.getInstance().convertValue(location, ObjectNode.class));
 		trigger("change", params);
+		
+		System.err.println("Set location:"+lat+":"+lng+"::"+description);
 	}
 
 	/**
