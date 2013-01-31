@@ -109,6 +109,16 @@ public class CapeClientAgent extends CapeDialogAgent {
 					"no notification handler set.");
 		}
 	}
+
+	/**
+	 * 
+	 * @param userId
+	 * @param subscribedUserId
+	 * @return
+	 */
+	private String getChangeHandlerKey(String userId, String subscribedUserId) {
+		return userId + ";" + subscribedUserId;
+	}
 	
 	/**
 	 * Receive a notification and dispatch it to the attached notification 
@@ -122,19 +132,23 @@ public class CapeClientAgent extends CapeDialogAgent {
 			userId = getId();
 		}
 
+		String key = getChangeHandlerKey(getId(), userId);
+		if (stateChangeHandlers.containsKey(key)) {
+			throw new Exception ("A state change handler already exists for " +
+					"userId=" + userId);
+		}
+
 		logger.info("Registering state handler for userId=" + userId + ", state=" + state);
 		String agentUrl = findDataSource(userId, "state");
 
 		logger.info("Found agent providing this state, url=" + agentUrl + ". subscribing...");
-		subscribe(agentUrl, "change", "onStateChange");
+		String subscriptionId = subscribe(agentUrl, "change", "onStateChange");
 
-		if (stateChangeHandlers.containsKey(agentUrl)) {
-			throw new Exception ("A state change handler for userId " + userId +
-					" and state " + state + " already exists.");
-		}
-		
-		// TODO: do not differentiate by agentUrl, but by a subscription id.
-		stateChangeHandlers.put(agentUrl, handler);
+		StateSubscription subscription = new StateSubscription();
+		subscription.subscriptionId = subscriptionId;
+		subscription.handler = handler;
+		subscription.agentUrl = agentUrl;
+		stateChangeHandlers.put(key, subscription);
 
 		logger.info("Registered state handler");
 	}
@@ -145,10 +159,11 @@ public class CapeClientAgent extends CapeDialogAgent {
 	 * @throws Exception 
 	 */
 	public void removeStateChangeHandler(StateChangeHandler handler) throws Exception {
-		for (String agentUrl : stateChangeHandlers.keySet()) {
-			if (stateChangeHandlers.get(agentUrl) == handler) {
-				unsubscribe(agentUrl, "change", "onStateChange");
-				stateChangeHandlers.remove(agentUrl);
+		for (String key : stateChangeHandlers.keySet()) {
+			StateSubscription subscription = stateChangeHandlers.get(key);
+			if (subscription.handler == handler) {
+				unsubscribe(subscription.agentUrl, subscription.subscriptionId);
+				stateChangeHandlers.remove(key);
 			}
 		}
 	}
@@ -158,9 +173,10 @@ public class CapeClientAgent extends CapeDialogAgent {
 	 * @throws Exception 
 	 */
 	public void removeStateChangeHandlers() throws Exception {
-		for (String agentUrl : stateChangeHandlers.keySet()) {
-			unsubscribe(agentUrl, "change", "onStateChange");
-			stateChangeHandlers.remove(agentUrl);
+		for (String key : stateChangeHandlers.keySet()) {
+			StateSubscription subscription = stateChangeHandlers.get(key);
+			unsubscribe(subscription.agentUrl, subscription.subscriptionId);
+			stateChangeHandlers.remove(key);
 		}
 	}
 	
@@ -170,18 +186,16 @@ public class CapeClientAgent extends CapeDialogAgent {
 	 * @param event
 	 * @param params
 	 */
-	public void onStateChange(@Name("agent") String agent,
-	        @Name("event") String event, 
+	public void onStateChange(
+			@Required(false) @Name("subscriptionId") String subscriptionId,
+			@Required(false) @Name("agent") String agent,
+	        @Required(false) @Name("event") String event, 
 	        @Required(false) @Name("params") ObjectNode params) {
-		/* FIXME: only trigger the corresponding StateChangeHander, not all
-		// (needs matching by subscription id)
-		StateChangeHandler handler = stateChangeHandlers.get(agent);
-		if (handler != null) {
-			handler.onChange(params);
-		}
-		*/
-		for (String agentUrl : stateChangeHandlers.keySet()) {
-			stateChangeHandlers.get(agentUrl).onChange(params);
+		for (String key : stateChangeHandlers.keySet()) {
+			StateSubscription subscription = stateChangeHandlers.get(key);
+			if (subscription.subscriptionId.equals(subscriptionId)) {
+				subscription.handler.onChange(params);
+			}
 		}
 	}
 	
@@ -211,7 +225,7 @@ public class CapeClientAgent extends CapeDialogAgent {
 		}
 		return null;
 	}
-
+	
 	@Override
 	public String getDescription() {
 		return "CAPE Client Agent";
@@ -222,14 +236,23 @@ public class CapeClientAgent extends CapeDialogAgent {
 		return "0.1";
 	}
 	
+	/**
+	 * Helper class to store state handlers
+	 */
+	private class StateSubscription {
+		public String agentUrl;
+		public String subscriptionId;
+		public StateChangeHandler handler;
+	}
+	
 	// TODO: the notification handler and stateChange handlers are a singleton 
 	//       per user right now, as we cannot have a single, continuously 
 	//       instantiated agent: the AgentFactory  will instantiate a new 
 	//       instance of our agent on incoming calls.
 	private static Map<String, NotificationHandler> notificationHandlers = 
 			new ConcurrentHashMap<String, NotificationHandler>();
-	private static Map<String, StateChangeHandler> stateChangeHandlers = 
-			new ConcurrentHashMap<String, StateChangeHandler>();
+	private static Map<String, StateSubscription> stateChangeHandlers = 
+			new ConcurrentHashMap<String, StateSubscription>();
 	
 	private Logger logger = Logger.getLogger(this.getClass().getSimpleName());
 }

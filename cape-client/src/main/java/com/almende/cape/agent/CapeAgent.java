@@ -60,7 +60,12 @@ public abstract class CapeAgent extends Agent {
 			Context context = getContext();
 			context.put("xmppUsername", newUsername);
 			context.put("xmppPassword", newPassword);
-			context.put("xmppResource", newResource);
+			if (newResource != null) {
+				context.put("xmppResource", newResource);
+			}
+			else {
+				context.remove("xmppResource");
+			}
 		}
 		else {
 			throw new Exception("Cannot change account: " +
