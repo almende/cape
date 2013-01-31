@@ -3,10 +3,10 @@ package com.almende.cape.agent;
 import java.util.ArrayList;
 import java.util.HashSet;
 
-import com.almende.eve.context.Context;
-
 @SuppressWarnings("unchecked")
 public class BuildingAgent extends CapeAgent {
+	HashSet<String> agentSet = null;
+	
 	@Override
 	public String getVersion() {
 		return "0.1";
@@ -18,65 +18,54 @@ public class BuildingAgent extends CapeAgent {
 				"which will keep track of which agents are in the building and" +
 				"will notify the last agent remaining in the building.";
 	}
+	
+	private HashSet<String> getAgentSet(){
+		HashSet<String> agentSet = (HashSet<String>) getContext().get("agentSet");
+		if (agentSet == null) {
+			agentSet = new HashSet<String>();
+			getContext().put("agentSet",agentSet);
+		}
+		return agentSet;
+	}
+	private void setAgentSet(HashSet<String> agentSet){
+		getContext().put("agentSet", agentSet);
+	}
 	public void registerUser(String url) throws Exception {
-		Context context = getContext();
+		
 		// Get the list of registered agents by url. Create it if necessary.
-
-		HashSet<String> AgentsSet = (HashSet<String>) context.get("AgentsSet");
-		if (AgentsSet == null) {
-			AgentsSet = new HashSet<String>();
-		}
+		agentSet = getAgentSet();
 		// Add the url.
-		AgentsSet.add(url);
+		agentSet.add(url);
 		// Try to put back the list of agents into the context.
-		while (context.put("AgentsSet",AgentsSet) == null) {
-			// Failure means that the list of agents was modified in the meantime.
-			// We need to check if url was already added by someone else,
-			// otherwise we re-fetch the updated list of agents, add url and retry.
-			AgentsSet = (HashSet<String>) context.get("AgentsSet");
-			if (AgentsSet.contains(url)) {
-				continue;
-			}
-			AgentsSet.add(url);
-		}
+		setAgentSet(agentSet);
+		
 		// Subscribe the added agent to the change location event.
 		@SuppressWarnings("unused")
 		String subscriptionId = subscribe(url,"change","onChange");
 	}
 	public Integer numberOfUsers() {
-		Context context = getContext();
-		HashSet<String> AgentsSet = (HashSet<String>) context.get("AgentsSet");
-		if (AgentsSet == null) {
+		HashSet<String> agentSet = getAgentSet();
+		if (agentSet == null) {
 			return 0;
 		}
-		return AgentsSet.size();
+		return agentSet.size();
 	}
 	public ArrayList<String> getUsers() {
 		ArrayList<String> retval = new ArrayList<String>();
-		Context context = getContext();
-		HashSet<String> AgentsSet = (HashSet<String>) context.get("AgentsSet");
-		if (AgentsSet == null) {
+		HashSet<String> agentSet = getAgentSet();
+		if (agentSet == null) {
 			return retval;
-		}		
-		for (String url: AgentsSet) {
-			retval.add(url);
 		}
+		retval.addAll(agentSet);
 		return retval;
 	}
 	public void unregisterUser(String url) {
-		Context context = getContext();
-		HashSet<String> AgentsSet = (HashSet<String>) context.get("AgentsSet");
-		if (AgentsSet == null) {
+		HashSet<String> agentSet = getAgentSet();
+		if (agentSet == null) {
 			return;
 		}
-		AgentsSet.remove(url);
-		while (context.put("AgentsSet",AgentsSet) == null) {
-			AgentsSet = (HashSet<String>) context.get("AgentsSet");
-			if (!AgentsSet.contains(url)) {
-				continue;
-			}
-			AgentsSet.remove(url);
-		}
+		agentSet.remove(url);
+		setAgentSet(agentSet);
 		// unsubscribe(url,"change","onChange");
 	}
 	public void onChange(String url, String event, Object params) {
