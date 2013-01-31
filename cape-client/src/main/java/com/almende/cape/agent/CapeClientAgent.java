@@ -8,67 +8,9 @@ import com.almende.cape.handler.NotificationHandler;
 import com.almende.cape.handler.StateChangeHandler;
 import com.almende.eve.agent.annotation.Name;
 import com.almende.eve.agent.annotation.Required;
-import com.almende.eve.rpc.jsonrpc.jackson.JOM;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class CapeClientAgent extends CapeDialogAgent {
-	/**
-	 * Retrieve contacts
-	 * @param contactFilter
-	 * @return contacts
-	 * @throws Exception 
-	 */
-	// TODO: replace arrayNode for List<Contact> and ObjectNode with java class Contact?
-	public ArrayNode getContacts(
-			@Name("contactFilter") @Required(false) ObjectNode filter) 
-			throws Exception {
-		String userId = getId();
-		String dataType = "contacts";
-		String contactAgentUrl = findDataSource(userId, dataType);
-		if (contactAgentUrl == null) {
-			throw new Exception(
-					"No data source found containing contacts of user " + getId());
-		}
-		// TODO: cache the retrieved data source for some time
-		
-		String method = "getContacts";
-		ObjectNode params = JOM.createObjectNode();
-		String filterStr = (filter != null) ? JOM.getInstance().writeValueAsString(filter) : "";
-		params.put("filter", filterStr);
-		String contacts = send(contactAgentUrl, method, params, String.class);
-		ArrayNode array = JOM.getInstance().readValue(contacts, ArrayNode.class);
-		
-		return array;
-	}
-
-	/**
-	 * Send a notification to any user
-	 * @param userId  can be null
-	 * @param message
-	 * @throws Exception 
-	 */
-	public void sendNotification(@Required(false) @Name("userId") String userId, 
-			@Name("message") String message) throws Exception {
-		if (userId == null) {
-			userId = getId();
-		}
-		String dataType = "dialog";
-		
-		// find an agent which can handle a dialog with the user
-		String notificationAgentUrl = findDataSource(userId, dataType);
-		if (notificationAgentUrl == null) {
-			throw new Exception(
-					"No data source found supporting a dialog with user " + userId);
-		}
-		
-		// send the notification
-		String method = "onNotification";
-		ObjectNode params = JOM.createObjectNode();
-		params.put("message", message);
-		send(notificationAgentUrl, method, params);
-	}
-
 	/**
 	 * Attach a notification handler to the agent.
 	 * The notification handler will be available as long as the agent is 
