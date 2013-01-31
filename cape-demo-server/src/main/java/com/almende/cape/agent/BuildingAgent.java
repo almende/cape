@@ -60,16 +60,21 @@ public class BuildingAgent extends CapeAgent {
 	}
 	
 	/**
-	 * Register a new user to the building
+	 * Register a user to the building
 	 * @param userId
-	 * @param agentUrl
+	 * @return user
 	 * @throws Exception
 	 */
-	public void registerUser(
-			@Name("userId") String userId, 
-			@Name("AgentUrl") String agentUrl) throws Exception {
+	public Person registerUser(@Name("userId") String userId) throws Exception {
 		// unregister first to prevent double entries
 		unregisterUser(userId);
+		
+		String dataType = "state";
+		String agentUrl = findDataSource(userId, dataType);
+		if (agentUrl == null) {
+			throw new Exception("No agent found providing state information " +
+					"for user " + userId);
+		}
 		
 		// subscribe to the agents change location event.
 		String subscriptionId = subscribe(agentUrl, "change", "onChange");
@@ -88,6 +93,8 @@ public class BuildingAgent extends CapeAgent {
 		}	
 		users.add(user);
 		context.put("users", users);
+		
+		return user;
 	}
 
 	/**
@@ -131,21 +138,13 @@ public class BuildingAgent extends CapeAgent {
 		List<Person> users = (List<Person>) getContext().get("users");
 		if (users != null) {
 			if ("in".equals(status)) {
-				List<Person> presentUsers = new ArrayList<Person>();
-				for (Person user : users) {
-					if (user.present) {
-						presentUsers.add(user);
-					}
-				}
+				Boolean present = true;
+				List<Person> presentUsers = filter(users, present);
 				return presentUsers;
 			}
 			else if ("out".equals(status)) {
-				List<Person> absentUsers = new ArrayList<Person>();
-				for (Person user : users) {
-					if (!user.present) {
-						absentUsers.add(user);
-					}
-				}
+				Boolean present = false;
+				List<Person> absentUsers = filter(users, present);
 				return absentUsers;
 			}
 			else {
@@ -156,6 +155,23 @@ public class BuildingAgent extends CapeAgent {
 			return new ArrayList<Person>();
 		}
 	}
+	
+	/**
+	 * Filter given list with users by status: present or absent
+	 * @param users
+	 * @param present
+	 * @return filteredUsers
+	 */
+	private List<Person> filter(List<Person> users, Boolean present) {
+			List<Person> filteredUsers = new ArrayList<Person>();
+			for (Person user : users) {
+				if (present.equals(user.present)) {
+					filteredUsers.add(user);
+				}
+			}
+			return filteredUsers;
+	}
+	
 	
 	/**
 	 * Callback method for the change event of LocationAgents. 
@@ -183,6 +199,11 @@ public class BuildingAgent extends CapeAgent {
 		Context context = getContext();
 		List<Person> users = (List<Person>) context.get("users");
 		if (users != null) {
+			// calculate the number of present users
+			List<Person> presentUsers = filter(users, true);
+			int userCountBefore = presentUsers.size();
+			
+			// find this user to update its data
 			for (Person user : users) {
 				if (user.agentUrl.equals(agent)) {
 					// found the correct user. update its location
@@ -203,10 +224,31 @@ public class BuildingAgent extends CapeAgent {
 					}
 				}
 			}
+			
+			// check whether the number of present users changed to 1
+			presentUsers = filter(users, true);
+			int userCountAfter = presentUsers.size();
+			if (userCountBefore > 2 && userCountAfter == 1) {
+				Person lastUser = presentUsers.get(0);
+				notifyLastUser(lastUser.userId);
+			}
 		}
-		
-		// TODO: test whether only one person is left, if so, notify the person
-		
+	}
+	
+	/**
+	 * Send a notification to the last user
+	 */
+	// TODO: change notifyLastUser to private method
+	public void notifyLastUser(@Name("userId") String userId) {
+		try {
+			String message = 
+					"Hello " + userId + ". You are the last one in the building. " +
+					"Please don't forget to lock up everyting properly when you leave. " +
+				    "Thanks, your BuildingAgent.";
+			sendNotification(userId, message);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	/**
@@ -216,7 +258,7 @@ public class BuildingAgent extends CapeAgent {
 	 * @param range   in kilometers
 	 * @return
 	 */
-	protected boolean withinRange(Location a, Location b, Double range) {
+	private boolean withinRange(Location a, Location b, Double range) {
 		Double distance = distance(a, b);
 		return distance < range;
 	}
@@ -228,7 +270,7 @@ public class BuildingAgent extends CapeAgent {
 	 * @param b
 	 * @return distance in km
 	 */
-	protected Double distance(Location a, Location b) {
+	private Double distance(Location a, Location b) {
 		Double R = (double) 6371; // km
 		Double dLat = Math.toRadians(b.lat - a.lat);
 		Double dLon = Math.toRadians(b.lng - a.lng);
