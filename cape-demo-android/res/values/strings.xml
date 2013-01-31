@@ -7,6 +7,8 @@
     <string name="password">Password</string>
     <string name="connect">Connect</string>
     <string name="get_contacts">Get Contacts</string>
+    <string name="use_actual_location">Use actual location</string>
+    <string name="move_away">Move away</string>
     <string name="disconnect">Disconnect</string>
     <string name="ok">OK</string>
     

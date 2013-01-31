@@ -5,6 +5,7 @@ import com.almende.cape.handler.NotificationHandler;
 import com.almende.cape.handler.StateChangeHandler;
 import com.almende.eve.agent.AgentFactory;
 import com.almende.eve.context.MemoryContextFactory;
+import com.almende.eve.scheduler.RunnableSchedulerFactory;
 import com.almende.eve.transport.xmpp.XmppService;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -25,6 +26,8 @@ public class CapeClient {
 				factory = AgentFactory.createInstance();
 				
 				factory.setContextFactory(new MemoryContextFactory(factory));
+				
+				factory.setSchedulerFactory(new RunnableSchedulerFactory(factory, ".runnablescheduler"));
 				
 				String host = "openid.almende.org";
 				Integer port = 5222;

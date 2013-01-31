@@ -15,14 +15,15 @@ import android.widget.TextView;
 
 import com.almende.cape.CapeClient;
 import com.almende.cape.handler.NotificationHandler;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 
 public class CapeDemo extends Activity {
 	private EditText txtUsername;
 	private EditText txtPassword;
 	private Button btnConnect;
 	private Button btnDisconnect;
-	private Button btnGetContacts;
+	private Button btnUseActualLocation;
+	private Button btnMoveAway;
+	private TextView lblLocation;
 	private TextView lblInfo;
 	Context ctx = null;
 	
@@ -53,6 +54,7 @@ public class CapeDemo extends Activity {
 			}
         });
 
+        /* TODO: cleanup
         btnGetContacts = (Button) findViewById(R.id.getContacts);
         btnGetContacts.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -60,6 +62,27 @@ public class CapeDemo extends Activity {
 				new GetContactsTask().execute();
 			}
         });
+        */
+        
+        btnUseActualLocation = (Button) findViewById(R.id.useActualLocation);
+        btnUseActualLocation.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				// TODO: implement use actual location
+				logger.info("Use actual location... (to be implemented)");
+			}
+        });
+        
+        btnMoveAway = (Button) findViewById(R.id.moveAway);
+        btnMoveAway.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				// TODO: implement move away
+				logger.info("Move away... (to be implemented)");
+			}
+        });
+        
+        lblLocation = (TextView) findViewById(R.id.location);
         
         lblInfo = (TextView) findViewById(R.id.info);
     }
@@ -114,7 +137,8 @@ public class CapeDemo extends Activity {
 				txtPassword.setVisibility(View.INVISIBLE);
 				btnConnect.setVisibility(View.INVISIBLE);
 				btnDisconnect.setVisibility(View.VISIBLE);
-				btnGetContacts.setVisibility(View.VISIBLE);	
+				btnUseActualLocation.setVisibility(View.VISIBLE);
+				btnMoveAway.setVisibility(View.VISIBLE);	
     		}
     	}
     }
@@ -155,11 +179,13 @@ public class CapeDemo extends Activity {
 				txtPassword.setVisibility(View.VISIBLE);
 				btnConnect.setVisibility(View.VISIBLE);
 				btnDisconnect.setVisibility(View.INVISIBLE);
-				btnGetContacts.setVisibility(View.INVISIBLE);
+				btnUseActualLocation.setVisibility(View.INVISIBLE);
+				btnMoveAway.setVisibility(View.INVISIBLE);
     		}
     	}
     }
 
+    /* TODO: cleanup
     class GetContactsTask extends AsyncTask<Void, String, String> {
 		@Override
 		protected String doInBackground(Void... params) {
@@ -187,6 +213,8 @@ public class CapeDemo extends Activity {
 			btnGetContacts.setEnabled(true);
     	}
     }
+    */
+    
     
     private CapeClient cape = new CapeClient();
     private LocationSimulation locationSimulation = new LocationSimulation();
