@@ -6,9 +6,11 @@ import java.io.Serializable;
 public class Person implements Serializable {
 	public Person() {}
 	
+	public String userId;
 	public String agentUrl;
 	public String subscriptionId;
-	public Boolean present;
-	
+
 	public Location location;
+	public Double distance; // distance in kilometers
+	public Boolean present; // true if within a range of 100 meters
 }
