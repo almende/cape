@@ -295,7 +295,7 @@ public abstract class CapeAgent extends Agent {
 	 * Get the xmpp url of this agent. Will return null if there is no xmpp url.
 	 * @return url
 	 */
-	private String getXmppUrl() {
+	protected String getXmppUrl() {
 		for (String url : getUrls()) {
 			if (url.startsWith("xmpp:")) {
 				return url;
