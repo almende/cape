@@ -2,6 +2,7 @@ package com.almende.cape.agent;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import android.content.Context;
 import android.location.Location;
@@ -18,6 +19,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class LocationAgent extends CapeStateAgent {
 	/** Android Application Context, not Eve context! */
+	private static String BUILDING_URL = "xmpp:building@openid.almende.org";
 	Context context = null;
 	LocationManager locationManager = null;
 
@@ -206,6 +208,46 @@ public class LocationAgent extends CapeStateAgent {
 			e.printStackTrace();
 		}
 	}
+	
+	/**
+	 * Register the user at the building agent
+	 * @throws Exception
+	 */
+	public void registerBuilding() throws Exception {
+		String userId = (String) getContext().get("xmppUsername");
+		logger.info("registering userId " + userId + " at building agent...");
+		if (userId != null) {
+			// register our use at the building agent
+			ObjectNode params = JOM.createObjectNode();
+			params.put("userId", userId);
+			send(BUILDING_URL, "registerUser", params);
+			
+			logger.info("registered at building agent");
+		}
+		else {
+			// TODO: warning or error
+		}		
+	}
+	
+	/**
+	 * Unregister our user from the building agent
+	 * @throws Exception
+	 */
+	public void unregisterBuilding() throws Exception {
+		String userId = (String) getContext().get("xmppUsername");
+		logger.info("unregistering userId " + userId + " at building agent...");
+		if (userId != null) {
+			// register our use at the building agent
+			ObjectNode params = JOM.createObjectNode();
+			params.put("userId", userId);
+			send(BUILDING_URL, "unregisterUser", params);
+		
+			logger.info("unregistered at building agent");
+		}
+		else {
+			// TODO: warning or error
+		}
+	}
 
 	@Override
 	public String getDescription() {
@@ -222,4 +264,5 @@ public class LocationAgent extends CapeStateAgent {
 		this.locationLabel  = lblLocation;
 	}
 
+    private static Logger logger = Logger.getLogger(LocationAgent.class.getSimpleName());;
 }
