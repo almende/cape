@@ -19,7 +19,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class LocationAgent extends CapeStateAgent {
 	/** Android Application Context, not Eve context! */
-	Context context = null;
+	static Context context = null;
 	LocationManager locationManager = null;
 
 	// Define a listener that responds to location updates
@@ -47,11 +47,11 @@ public class LocationAgent extends CapeStateAgent {
 	private static TextView locationLabel = null;
 
 	public void setAndroidContext(Context context) {
-		this.context = context;
+		LocationAgent.context = context;
 	}
 
 	public void startSensor() throws Exception {
-		if (this.context == null) {
+		if (LocationAgent.context == null) {
 			throw new Exception("Android App context is not yet set!");
 		}
 		// Acquire a reference to the system Location Manager
