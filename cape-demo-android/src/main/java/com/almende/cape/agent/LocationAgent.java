@@ -12,6 +12,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.widget.TextView;
 
+import com.almende.cape.android.R;
 import com.almende.eve.agent.annotation.Name;
 import com.almende.eve.agent.annotation.Required;
 import com.almende.eve.rpc.jsonrpc.JSONRequest;
@@ -21,7 +22,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 public class LocationAgent extends CapeStateAgent {
 	/** Android Application Context, not Eve context! */
 	private static String BUILDING_URL = "xmpp:building@openid.almende.org";
-	static Context context = null;
+	static Activity context = null;
 	LocationManager locationManager = null;
 
 	// Define a listener that responds to location updates
@@ -48,11 +49,13 @@ public class LocationAgent extends CapeStateAgent {
 	};
 	private static TextView locationLabel = null;
 
-	public void setAndroidContext(Context context) {
+	public void setAndroidContext(Activity context) {
 		LocationAgent.context = context;
 	}
 
 	public void startSensor() throws Exception {
+		stopSimulation();
+		
 		if (LocationAgent.context == null) {
 			throw new Exception("Android App context is not yet set!");
 		}
@@ -135,9 +138,9 @@ public class LocationAgent extends CapeStateAgent {
 		Activity act = (Activity) context;
 		if (act != null) {
 			act.runOnUiThread(new MyRunnable("Location:"+lat + ":" + lng + " - "+description));
-			System.err.println("Set location:"+lat+":"+lng+"::"+description);	
+			logger.info("Set location:"+lat+":"+lng+"::"+description);	
 		} else {
-			System.err.println("Activity not found!");
+			logger.severe("Activity not found!");
 		}
 	}
 
@@ -145,13 +148,14 @@ public class LocationAgent extends CapeStateAgent {
 		private final String message;
 		MyRunnable(final String message) {
 			this.message = message;
+			locationLabel = (TextView) context.findViewById(R.id.location);
 		}
 
 		public void run() {
 			if (locationLabel != null){
 				locationLabel.setText(message);
 			} else {
-				System.err.println("LocationLabel is null???");
+				logger.severe("LocationLabel is null???");
 			}
 		}
 	}
@@ -237,12 +241,12 @@ public class LocationAgent extends CapeStateAgent {
 			// register our use at the building agent
 			ObjectNode params = JOM.createObjectNode();
 			params.put("userId", userId);
-			send(BUILDING_URL, "registerUser", params);
+//			send(BUILDING_URL, "registerUser", params);
 			
 			logger.info("registered at building agent");
 		}
 		else {
-			// TODO: warning or error
+			System.err.println("Couldn't find the userId?");
 		}		
 	}
 	
@@ -257,7 +261,7 @@ public class LocationAgent extends CapeStateAgent {
 			// register our use at the building agent
 			ObjectNode params = JOM.createObjectNode();
 			params.put("userId", userId);
-			send(BUILDING_URL, "unregisterUser", params);
+//			send(BUILDING_URL, "unregisterUser", params);
 		
 			logger.info("unregistered at building agent");
 		}
@@ -275,10 +279,6 @@ public class LocationAgent extends CapeStateAgent {
 	@Override
 	public String getVersion() {
 		return "0.1";
-	}
-
-	public void setLocationLabel(TextView lblLocation) {
-		LocationAgent.locationLabel  = lblLocation;
 	}
 
     private static Logger logger = Logger.getLogger(LocationAgent.class.getSimpleName());;

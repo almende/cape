@@ -4,7 +4,6 @@ package com.almende.cape.android;
 import java.util.logging.Logger;
 
 import android.app.Activity;
-import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
@@ -23,19 +22,26 @@ public class CapeDemo extends Activity {
 	private Button btnDisconnect;
 	private Button btnUseActualLocation;
 	private Button btnMoveAway;
+	@SuppressWarnings("unused")
 	private TextView lblLocation;
 	private TextView lblInfo;
-	Context ctx = null;
+	Activity ctx = null;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        if (savedInstanceState == null){
+        	logger.severe("savedInstanceState is null!");
+        } else {
+        	logger.severe("savedInstanceState:"+savedInstanceState.toString());
+        	
+        }
         setContentView(R.layout.activity_cape_demo);
+        
         ctx = this;
-
         txtUsername = (EditText) findViewById(R.id.username);
         txtPassword = (EditText) findViewById(R.id.password);
-        
         btnConnect = (Button) findViewById(R.id.connect);
         btnConnect.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -54,21 +60,11 @@ public class CapeDemo extends Activity {
 			}
         });
 
-        /* TODO: cleanup
-        btnGetContacts = (Button) findViewById(R.id.getContacts);
-        btnGetContacts.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View view) {
-				new GetContactsTask().execute();
-			}
-        });
-        */
-        
         btnUseActualLocation = (Button) findViewById(R.id.useActualLocation);
         btnUseActualLocation.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				locationSimulation.useActualLocation(ctx);
+				locationSimulation.useActualLocation();
 			}
         });
         
@@ -76,7 +72,7 @@ public class CapeDemo extends Activity {
         btnMoveAway.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				locationSimulation.moveAway(ctx);
+				locationSimulation.moveAway();
 			}
         });
         
@@ -104,6 +100,8 @@ public class CapeDemo extends Activity {
 					@Override
 					public void onNotification(String message) {
 						logger.info("Notification: " + message);
+						lblInfo.setText(message);
+						lblInfo.postInvalidate();
 					}
 				});
     			
@@ -111,7 +109,6 @@ public class CapeDemo extends Activity {
     			
     			// start location simulation
     			locationSimulation.start(username, password, ctx);
-    	        locationSimulation.setLocationLabel(lblLocation);
     			
     			return "connected";
     		} catch (Exception e) {
@@ -183,36 +180,6 @@ public class CapeDemo extends Activity {
     	}
     }
 
-    /* TODO: cleanup
-    class GetContactsTask extends AsyncTask<Void, String, String> {
-		@Override
-		protected String doInBackground(Void... params) {
-			try {
-				logger.info("getting contacts...");
-
-    			ArrayNode contacts = cape.getContacts(null);
-    			logger.info("contacts retrieved: " + contacts);
-    			
-    			return "contacts retrieved";
-    		} catch (Exception e) {
-    			e.printStackTrace();
-    			return "failed to retrieve contacts";
-    		}
-		}
-
-		@Override
-    	protected void onPreExecute() {
-			btnGetContacts.setEnabled(false);
-    	}
-		
-		@Override
-    	protected void onPostExecute(String state) {
-			lblInfo.setText(state);
-			btnGetContacts.setEnabled(true);
-    	}
-    }
-    */
-    
     
     private CapeClient cape = new CapeClient();
     private LocationSimulation locationSimulation = new LocationSimulation();

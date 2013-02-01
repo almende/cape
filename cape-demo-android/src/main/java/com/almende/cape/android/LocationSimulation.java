@@ -1,9 +1,8 @@
 package com.almende.cape.android;
 
-import android.content.Context;
+import android.app.Activity;
 import android.os.Handler;
 import android.os.Looper;
-import android.widget.TextView;
 
 import com.almende.cape.agent.LocationAgent;
 import com.almende.eve.agent.AgentFactory;
@@ -16,7 +15,7 @@ public class LocationSimulation {
 	private AgentFactory factory = null;
 	private LocationAgent agent = null;
 
-	public void start(String username, String password, Context context) {
+	public void start(String username, String password, Activity context) {
 		try {
 			if (factory == null) {
 				factory = AgentFactory.getInstance();
@@ -64,22 +63,17 @@ public class LocationSimulation {
 		}
 	}
 
-	public void useActualLocation(Context context) {
+	public void useActualLocation() {
 		try {
-			agent.setAndroidContext(context);
 			agent.startSensor();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	public void moveAway(Context context) {
-		agent.setAndroidContext(context);
+	public void moveAway() {
 		agent.startSimulation();
 		
 	}
 
-	public void setLocationLabel(TextView lblLocation) {
-		agent.setLocationLabel(lblLocation);
-	}
 }
