@@ -9,51 +9,50 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/username" />
-    
+
     <EditText
         android:id="@+id/password"
-        android:inputType="textPassword"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/password" />
-    
+        android:hint="@string/password"
+        android:inputType="textPassword" />
+
     <Button
         android:id="@+id/connect"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/connect" />
-    
+
     <Button
         android:id="@+id/disconnect"
-        android:enabled="false"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:enabled="false"
         android:text="@string/disconnect" />
 
     <Button
         android:id="@+id/useActualLocation"
-        android:enabled="false"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:enabled="false"
         android:text="@string/use_actual_location" />
-    
+
     <Button
         android:id="@+id/moveAway"
-        android:enabled="false"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:enabled="false"
         android:text="@string/move_away" />
-    
+
     <TextView
         android:id="@+id/location"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1" />
-    
+        android:layout_height="wrap_content" />
+
     <TextView
         android:id="@+id/info"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1" />
+        android:layout_height="0dip"
+        android:layout_weight="0.38" />
 
 </LinearLayout>

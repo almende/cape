@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import android.app.Activity;
 import android.content.Context;
 import android.location.Location;
 import android.location.LocationListener;
@@ -20,7 +21,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 public class LocationAgent extends CapeStateAgent {
 	/** Android Application Context, not Eve context! */
 	private static String BUILDING_URL = "xmpp:building@openid.almende.org";
-	Context context = null;
+	static Context context = null;
 	LocationManager locationManager = null;
 
 	// Define a listener that responds to location updates
@@ -45,14 +46,14 @@ public class LocationAgent extends CapeStateAgent {
 		public void onProviderDisabled(String provider) {
 		}
 	};
-	private TextView locationLabel = null;
+	private static TextView locationLabel = null;
 
 	public void setAndroidContext(Context context) {
-		this.context = context;
+		LocationAgent.context = context;
 	}
 
 	public void startSensor() throws Exception {
-		if (this.context == null) {
+		if (LocationAgent.context == null) {
 			throw new Exception("Android App context is not yet set!");
 		}
 		// Acquire a reference to the system Location Manager
@@ -131,13 +132,29 @@ public class LocationAgent extends CapeStateAgent {
 				JOM.getInstance().convertValue(location, ObjectNode.class));
 		trigger("change", params);
 		
-		if (locationLabel != null){
-			locationLabel.setText("Location:"+lat + ":" + lng + " - "+description);
-			locationLabel.invalidate();
+		Activity act = (Activity) context;
+		if (act != null) {
+			act.runOnUiThread(new MyRunnable("Location:"+lat + ":" + lng + " - "+description));
+			System.err.println("Set location:"+lat+":"+lng+"::"+description);	
+		} else {
+			System.err.println("Activity not found!");
 		}
-		System.err.println("Set location:"+lat+":"+lng+"::"+description);
 	}
 
+	private static class MyRunnable implements Runnable {
+		private final String message;
+		MyRunnable(final String message) {
+			this.message = message;
+		}
+
+		public void run() {
+			if (locationLabel != null){
+				locationLabel.setText(message);
+			} else {
+				System.err.println("LocationLabel is null???");
+			}
+		}
+	}
 	/**
 	 * Start simulation of the location
 	 */
@@ -261,7 +278,7 @@ public class LocationAgent extends CapeStateAgent {
 	}
 
 	public void setLocationLabel(TextView lblLocation) {
-		this.locationLabel  = lblLocation;
+		LocationAgent.locationLabel  = lblLocation;
 	}
 
     private static Logger logger = Logger.getLogger(LocationAgent.class.getSimpleName());;

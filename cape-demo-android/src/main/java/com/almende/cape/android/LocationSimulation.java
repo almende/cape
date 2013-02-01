@@ -64,16 +64,19 @@ public class LocationSimulation {
 		}
 	}
 
-	public void useActualLocation() {
+	public void useActualLocation(Context context) {
 		try {
+			agent.setAndroidContext(context);
 			agent.startSensor();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	public void moveAway() {
+	public void moveAway(Context context) {
+		agent.setAndroidContext(context);
 		agent.startSimulation();
+		
 	}
 
 	public void setLocationLabel(TextView lblLocation) {

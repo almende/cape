@@ -68,7 +68,7 @@ public class CapeDemo extends Activity {
         btnUseActualLocation.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				locationSimulation.useActualLocation();
+				locationSimulation.useActualLocation(ctx);
 			}
         });
         
@@ -76,7 +76,7 @@ public class CapeDemo extends Activity {
         btnMoveAway.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				locationSimulation.moveAway();
+				locationSimulation.moveAway(ctx);
 			}
         });
         
