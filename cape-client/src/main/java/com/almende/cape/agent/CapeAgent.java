@@ -5,6 +5,8 @@ import java.util.logging.Logger;
 import com.almende.eve.agent.Agent;
 import com.almende.eve.agent.AgentFactory;
 import com.almende.eve.context.Context;
+import com.almende.eve.agent.annotation.Access;
+import com.almende.eve.agent.annotation.AccessType;
 import com.almende.eve.agent.annotation.Name;
 import com.almende.eve.agent.annotation.Required;
 import com.almende.eve.rpc.jsonrpc.jackson.JOM;
@@ -58,7 +60,9 @@ public abstract class CapeAgent extends Agent {
 		// TODO: do not store password! (at least not plain text)
 		
 		if (verifyAccount(oldUsername, oldPassword)) {
-			disconnect();
+			if (oldUsername != null && oldPassword != null) {
+				disconnect();
+			}
 			
 			Context context = getContext();
 			context.put("xmppUsername", newUsername);
@@ -211,7 +215,8 @@ public abstract class CapeAgent extends Agent {
 	 * @return contactAgentUrl
 	 * @throws Exception
 	 */
-	protected String findDataSource(String userId, String dataType) throws Exception {
+	@Access(AccessType.UNAVAILABLE)
+	public String findDataSource(String userId, String dataType) throws Exception {
 		String method = "find";
 		ObjectNode params = JOM.createObjectNode();
 		params.put("userId", userId);
@@ -230,7 +235,62 @@ public abstract class CapeAgent extends Agent {
 		}
 		return null;
 	}
+
+	/**
+	 * Send a notification to any user
+	 * @param userId  can be null
+	 * @param message
+	 * @throws Exception 
+	 */
+	@Access(AccessType.UNAVAILABLE)
+	public void sendNotification(String userId, String message) throws Exception {
+		if (userId == null) {
+			userId = getId();
+		}
+		String dataType = "dialog";
+		
+		// find an agent which can handle a dialog with the user
+		String notificationAgentUrl = findDataSource(userId, dataType);
+		if (notificationAgentUrl == null) {
+			throw new Exception(
+					"No data source found supporting a dialog with user " + userId);
+		}
+		
+		// send the notification
+		String method = "onNotification";
+		ObjectNode params = JOM.createObjectNode();
+		params.put("message", message);
+		send(notificationAgentUrl, method, params);
+	}
 	
+	/**
+	 * Retrieve contacts
+	 * @param contactFilter
+	 * @return contacts
+	 * @throws Exception 
+	 */
+	// TODO: replace arrayNode for List<Contact> and ObjectNode with java class Contact?
+	@Access(AccessType.UNAVAILABLE)
+	public ArrayNode getContacts(ObjectNode filter) throws Exception {
+		String userId = getId();
+		String dataType = "contacts";
+		String contactAgentUrl = findDataSource(userId, dataType);
+		if (contactAgentUrl == null) {
+			throw new Exception(
+					"No data source found containing contacts of user " + getId());
+		}
+		// TODO: cache the retrieved data source for some time
+		
+		String method = "getContacts";
+		ObjectNode params = JOM.createObjectNode();
+		String filterStr = (filter != null) ? JOM.getInstance().writeValueAsString(filter) : "";
+		params.put("filter", filterStr);
+		String contacts = send(contactAgentUrl, method, params, String.class);
+		ArrayNode array = JOM.getInstance().readValue(contacts, ArrayNode.class);
+		
+		return array;
+	}
+
 	/**
 	 * Get the xmpp url of this agent. Will return null if there is no xmpp url.
 	 * @return url

@@ -25,21 +25,21 @@
     
     <Button
         android:id="@+id/disconnect"
-        android:visibility="invisible"
+        android:enabled="false"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/disconnect" />
 
     <Button
         android:id="@+id/useActualLocation"
-        android:visibility="invisible"
+        android:enabled="false"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/use_actual_location" />
     
     <Button
         android:id="@+id/moveAway"
-        android:visibility="invisible"
+        android:enabled="false"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/move_away" />
@@ -53,7 +53,7 @@
     <TextView
         android:id="@+id/info"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:layout_weight="1" />
 
 </LinearLayout>

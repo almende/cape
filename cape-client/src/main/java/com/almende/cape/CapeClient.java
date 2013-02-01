@@ -85,7 +85,7 @@ public class CapeClient {
 			agent = null;
 		}
 	}
-		
+	
 	/**
 	 * Send a notification to the logged in user
 	 * @param message
