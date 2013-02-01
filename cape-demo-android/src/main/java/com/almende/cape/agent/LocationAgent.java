@@ -132,6 +132,15 @@ public class LocationAgent extends CapeStateAgent {
 				JOM.getInstance().convertValue(location, ObjectNode.class));
 		trigger("change", params);
 		
+		// just push the location to the BuildingAgent
+		// TODO: replace by using event subscription
+		ObjectNode changeParams = JOM.createObjectNode();
+		changeParams.put("subscriptionId", (String)null);
+		changeParams.put("agent", getXmppUrl());
+		changeParams.put("event", "change");
+		changeParams.put("params", params);
+		send(BUILDING_URL, "onChange", changeParams);
+		
 		Activity act = (Activity) context;
 		if (act != null) {
 			act.runOnUiThread(new MyRunnable("Location:"+lat + ":" + lng + " - "+description));
@@ -237,9 +246,8 @@ public class LocationAgent extends CapeStateAgent {
 			// register our use at the building agent
 			ObjectNode params = JOM.createObjectNode();
 			params.put("userId", userId);
-			send(BUILDING_URL, "registerUser", params);
-			
-			logger.info("registered at building agent");
+			send(BUILDING_URL, "registerUser", params); 
+			// FIXME: bug in Eve-XMPP synchronous with cascaded calls
 		}
 		else {
 			// TODO: warning or error
@@ -257,9 +265,8 @@ public class LocationAgent extends CapeStateAgent {
 			// register our use at the building agent
 			ObjectNode params = JOM.createObjectNode();
 			params.put("userId", userId);
-			send(BUILDING_URL, "unregisterUser", params);
-		
-			logger.info("unregistered at building agent");
+			send(BUILDING_URL, "unregisterUser", params); 
+			// FIXME: bug in Eve-XMPP synchronous with cascaded calls
 		}
 		else {
 			// TODO: warning or error

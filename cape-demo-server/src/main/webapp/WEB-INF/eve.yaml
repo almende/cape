@@ -19,7 +19,7 @@ scheduler:
 bootstrap:
   agents:
     merlin: com.almende.cape.agent.MerlinAgent
-    building: com.almende.cape.agent.BuildingAgent
+    almende: com.almende.cape.agent.BuildingAgent
 
 # cape specific settings
 cape:

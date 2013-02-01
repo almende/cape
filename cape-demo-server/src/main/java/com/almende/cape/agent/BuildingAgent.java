@@ -2,6 +2,7 @@ package com.almende.cape.agent;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 import com.almende.cape.entity.Location;
 import com.almende.cape.entity.Person;
@@ -62,28 +63,29 @@ public class BuildingAgent extends CapeAgent {
 	/**
 	 * Register a user to the building
 	 * @param userId
-	 * @return user
 	 * @throws Exception
 	 */
-	public Person registerUser(@Name("userId") String userId) throws Exception {
+	public void registerUser(@Name("userId") final String userId) throws Exception {
 		// unregister first to prevent double entries
 		unregisterUser(userId);
 		
+		/* TODO: implement subscription mechanism
 		String dataType = "state";
 		String agentUrl = findDataSource(userId, dataType);
 		if (agentUrl == null) {
-			throw new Exception("No agent found providing state information " +
-					"for user " + userId);
+			new Exception("No agent found providing state information " +
+					"for user " + userId).printStackTrace();
 		}
-		
+
 		// subscribe to the agents change location event.
 		String subscriptionId = subscribe(agentUrl, "change", "onChange");
-
+		*/
+		
 		// create a new user
 		Person user = new Person();
 		user.userId = userId;
-		user.agentUrl = agentUrl;
-		user.subscriptionId = subscriptionId;
+		//user.agentUrl = agentUrl;
+		//user.subscriptionId = subscriptionId;
 		
 		// add the user to the list with registered users
 		Context context = getContext();
@@ -93,8 +95,6 @@ public class BuildingAgent extends CapeAgent {
 		}	
 		users.add(user);
 		context.put("users", users);
-		
-		return user;
 	}
 
 	/**
@@ -123,9 +123,11 @@ public class BuildingAgent extends CapeAgent {
 			context.put("users", users);
 		}	
 
+		/* TODO: implement subscription mechanism
 		for (Person user : removedUsers) {
 			unsubscribe(user.agentUrl, "change", "onChange");
 		}
+		*/
 	}
 	
 	/**
@@ -195,6 +197,12 @@ public class BuildingAgent extends CapeAgent {
 		changeParams.put("params", params);
 		trigger("change", changeParams);
 		
+		// TODO: remove extraction of userId after subscription mechanism is in use
+		int doubledot = agent.indexOf(":");
+		int at = agent.indexOf("@");
+		String userId = (doubledot != -1 && at != -1) ? agent.substring(doubledot + 1, at) : null;
+		logger.info("new location received from userId=" + userId + ", params=" + changeParams);
+		
 		// find the user from the list, and update its location
 		Context context = getContext();
 		List<Person> users = (List<Person>) context.get("users");
@@ -205,7 +213,8 @@ public class BuildingAgent extends CapeAgent {
 			
 			// find this user to update its data
 			for (Person user : users) {
-				if (user.agentUrl.equals(agent)) {
+				if ((user.agentUrl != null && user.agentUrl.equals(agent)) || 
+						user.userId.equals(userId)) {
 					// found the correct user. update its location
 					if (params.has("location")) {
 						user.location = new Location((ObjectNode) params.get("location"));
@@ -284,4 +293,6 @@ public class BuildingAgent extends CapeAgent {
 		
 		return d;
 	}	
+
+	private static Logger logger = Logger.getLogger(BuildingAgent.class.getSimpleName());;
 }

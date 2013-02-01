@@ -31,7 +31,7 @@ public class LocationSimulation {
 			agent = (LocationAgent) factory.createAgent(LocationAgent.class, AGENT_ID);
 			agent.setAccount(username, password, "location");
 			agent.connect();
-			agent.registerBuilding();
+			//agent.registerBuilding(); // TODO: implement registration to building
 			agent.setAndroidContext(context);
 			mHandler.post(new Runnable() {
 		          public void run() {
@@ -53,7 +53,7 @@ public class LocationSimulation {
 			if (agent != null) {
 				agent.stopSimulation();
 				agent.stopSensor();
-				agent.unregisterBuilding();
+				//agent.unregisterBuilding(); // TODO: implement registration to building
 				agent.disconnect();
 				agent = null;
 				factory.deleteAgent(AGENT_ID);
