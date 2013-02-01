@@ -30,13 +30,6 @@ public class CapeDemo extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
-        if (savedInstanceState == null){
-        	logger.severe("savedInstanceState is null!");
-        } else {
-        	logger.severe("savedInstanceState:"+savedInstanceState.toString());
-        	
-        }
         setContentView(R.layout.activity_cape_demo);
         
         ctx = this;
