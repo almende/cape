@@ -3,6 +3,7 @@ package com.almende.cape.agent;
 import java.util.HashMap;
 import java.util.Map;
 
+import android.app.Activity;
 import android.content.Context;
 import android.location.Location;
 import android.location.LocationListener;
@@ -43,7 +44,7 @@ public class LocationAgent extends CapeStateAgent {
 		public void onProviderDisabled(String provider) {
 		}
 	};
-	private TextView locationLabel = null;
+	private static TextView locationLabel = null;
 
 	public void setAndroidContext(Context context) {
 		this.context = context;
@@ -129,13 +130,29 @@ public class LocationAgent extends CapeStateAgent {
 				JOM.getInstance().convertValue(location, ObjectNode.class));
 		trigger("change", params);
 		
-		if (locationLabel != null){
-			locationLabel.setText("Location:"+lat + ":" + lng + " - "+description);
-			locationLabel.invalidate();
+		Activity act = (Activity) context;
+		if (act != null) {
+			act.runOnUiThread(new MyRunnable("Location:"+lat + ":" + lng + " - "+description));
+			System.err.println("Set location:"+lat+":"+lng+"::"+description);	
+		} else {
+			System.err.println("Activity not found!");
 		}
-		System.err.println("Set location:"+lat+":"+lng+"::"+description);
 	}
 
+	private static class MyRunnable implements Runnable {
+		private final String message;
+		MyRunnable(final String message) {
+			this.message = message;
+		}
+
+		public void run() {
+			if (locationLabel != null){
+				locationLabel.setText(message);
+			} else {
+				System.err.println("LocationLabel is null???");
+			}
+		}
+	}
 	/**
 	 * Start simulation of the location
 	 */
@@ -219,7 +236,7 @@ public class LocationAgent extends CapeStateAgent {
 	}
 
 	public void setLocationLabel(TextView lblLocation) {
-		this.locationLabel  = lblLocation;
+		LocationAgent.locationLabel  = lblLocation;
 	}
 
 }
