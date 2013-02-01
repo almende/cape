@@ -1,19 +1,24 @@
 package com.almende.cape.agent;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.logging.Logger;
+import java.util.Map;
 
 import com.almende.cape.entity.Location;
 import com.almende.cape.entity.Person;
 import com.almende.eve.agent.annotation.Name;
 import com.almende.eve.agent.annotation.Required;
 import com.almende.eve.context.Context;
+import com.almende.eve.rpc.jsonrpc.JSONRequest;
 import com.almende.eve.rpc.jsonrpc.jackson.JOM;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 @SuppressWarnings("unchecked")
 public class BuildingAgent extends CapeAgent {
+	private static Double MAX_RANGE = 1.0; // km
+	
+	
 	@Override
 	public String getVersion() {
 		return "0.1";
@@ -201,7 +206,6 @@ public class BuildingAgent extends CapeAgent {
 		int doubledot = agent.indexOf(":");
 		int at = agent.indexOf("@");
 		String userId = (doubledot != -1 && at != -1) ? agent.substring(doubledot + 1, at) : null;
-		logger.info("new location received from userId=" + userId + ", params=" + changeParams);
 		
 		// find the user from the list, and update its location
 		Context context = getContext();
@@ -225,8 +229,7 @@ public class BuildingAgent extends CapeAgent {
 							user.distance = distance(buildingLocation, user.location);
 							
 							// calculate if within range of building
-							Double range = 0.1; // km
-							user.present = withinRange(buildingLocation, user.location, range);
+							user.present = withinRange(buildingLocation, user.location, MAX_RANGE);
 							
 							context.put("users", users);
 						}
@@ -234,14 +237,62 @@ public class BuildingAgent extends CapeAgent {
 				}
 			}
 			
-			// check whether the number of present users changed to 1
 			presentUsers = filter(users, true);
 			int userCountAfter = presentUsers.size();
-			if (userCountBefore > 2 && userCountAfter == 1) {
+			
+			// send an event
+			ObjectNode infoParams = JOM.createObjectNode();
+			infoParams.put("message", "Number of users left in the building: " +
+					"before=" + userCountBefore + ", after=" + userCountAfter);
+			trigger("info", infoParams);
+			
+			// check whether the number of present users changed to 1
+			if (userCountBefore > 1 && userCountAfter == 1) {
 				Person lastUser = presentUsers.get(0);
-				notifyLastUser(lastUser.userId);
+				// notifyLastUser(lastUser.userId);
+				
+				// FIXME: running via a separate task now to prevent cascading xmpp call
+				ObjectNode taskParams = JOM.createObjectNode();
+				taskParams.put("userId", lastUser.userId);
+				JSONRequest request = new JSONRequest("notifyLastUser", taskParams);
+				getScheduler().createTask(request, 0);				
 			}
 		}
+	}
+	
+	/**
+	 * get an overview of the building status
+	 * @return info
+	 */
+	public Map<String, Object> overview() {
+		Map<String, Object> info = new HashMap<String, Object>();
+		List<Person> users = (List<Person>) getContext().get("users");
+		if (users != null) {
+			List<String> in = new ArrayList<String>();
+			List<String> out = new ArrayList<String>();
+			List<String> unknown = new ArrayList<String>();
+			for (Person user : users) {
+				if (user.present == null) {
+					unknown.add(user.userId);
+				}
+				else if (user.present.equals(true)) {
+					in.add(user.userId);
+				}
+				else if (user.present.equals(false)) {
+					out.add(user.userId);
+				}
+			}
+			
+			info.put("in", in);
+			info.put("inNum", in.size());
+			info.put("out", out);
+			info.put("outNum", out.size());
+			info.put("unknown", unknown);
+			info.put("unknownNum", unknown.size());
+			info.put("totalNum", users.size());
+		}
+		
+		return info;
 	}
 	
 	/**
@@ -250,6 +301,11 @@ public class BuildingAgent extends CapeAgent {
 	// TODO: change notifyLastUser to private method
 	public void notifyLastUser(@Name("userId") String userId) {
 		try {
+			ObjectNode infoParams = JOM.createObjectNode();
+			infoParams.put("message", "Notifying userId=" + userId + 
+					" that he is the last in the building");
+			trigger("info", infoParams);
+			
 			String message = 
 					"Hello " + userId + ". You are the last one in the building. " +
 					"Please don't forget to lock up everyting properly when you leave. " +
@@ -294,5 +350,5 @@ public class BuildingAgent extends CapeAgent {
 		return d;
 	}	
 
-	private static Logger logger = Logger.getLogger(BuildingAgent.class.getSimpleName());;
+	//private static Logger logger = Logger.getLogger(BuildingAgent.class.getSimpleName());;
 }
