@@ -21,7 +21,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class LocationAgent extends CapeStateAgent {
 	/** Android Application Context, not Eve context! */
-	private static String BUILDING_URL = "xmpp:building@openid.almende.org";
+	private static String BUILDING_URL = "xmpp:almende@openid.almende.org";
 	static Activity context = null;
 	LocationManager locationManager = null;
 
