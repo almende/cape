@@ -125,7 +125,7 @@ public class CapeDemo extends Activity {
     			logger.info("connected");
     			
     			// start location simulation
-    			locationSimulation.start(username, password, ctx);
+    			locationSimulation.start(username, password);
     			
     			return "connected";
     		} catch (Exception e) {

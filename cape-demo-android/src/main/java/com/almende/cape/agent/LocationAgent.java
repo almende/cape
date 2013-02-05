@@ -22,7 +22,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 public class LocationAgent extends CapeStateAgent {
 	/** Android Application Context, not Eve context! */
 	private static String BUILDING_URL = "xmpp:almende@openid.almende.org";
-	static Activity context = null;
 	LocationManager locationManager = null;
 
 	// Define a listener that responds to location updates
@@ -49,16 +48,9 @@ public class LocationAgent extends CapeStateAgent {
 	};
 	private static TextView locationLabel = null;
 
-	public void setAndroidContext(Activity context) {
-		LocationAgent.context = context;
-	}
-
 	public void startSensor() throws Exception {
 		stopSimulation();
-		
-		if (LocationAgent.context == null) {
-			throw new Exception("Android App context is not yet set!");
-		}
+		Activity context = (Activity) getContext().get("AppContext");
 		// Acquire a reference to the system Location Manager
 		locationManager = (LocationManager) context
 				.getSystemService(Context.LOCATION_SERVICE);
@@ -144,9 +136,9 @@ public class LocationAgent extends CapeStateAgent {
 		changeParams.put("params", params);
 		send(BUILDING_URL, "onChange", changeParams);
 		
-		Activity act = (Activity) context;
+		Activity act = (Activity) getContext().get("AppContext");
 		if (act != null) {
-			act.runOnUiThread(new MyRunnable("Location:"+lat + ":" + lng + " - "+description));
+			act.runOnUiThread(new MyRunnable("Location:"+lat + ":" + lng + " - "+description, act));
 			logger.info("Set location:"+lat+":"+lng+"::"+description);	
 		} else {
 			logger.severe("Activity not found!");
@@ -155,7 +147,7 @@ public class LocationAgent extends CapeStateAgent {
 
 	private static class MyRunnable implements Runnable {
 		private final String message;
-		MyRunnable(final String message) {
+		MyRunnable(final String message,Activity context) {
 			this.message = message;
 			locationLabel = (TextView) context.findViewById(R.id.location);
 		}

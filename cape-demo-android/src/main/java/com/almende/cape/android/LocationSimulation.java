@@ -1,6 +1,5 @@
 package com.almende.cape.android;
 
-import android.app.Activity;
 import android.os.Handler;
 import android.os.Looper;
 
@@ -15,7 +14,7 @@ public class LocationSimulation {
 	private AgentFactory factory = null;
 	private LocationAgent agent = null;
 
-	public void start(String username, String password, Activity context) {
+	public void start(String username, String password) {
 		try {
 			if (factory == null) {
 				factory = AgentFactory.getInstance();
@@ -35,7 +34,6 @@ public class LocationSimulation {
 			agent.setAccount(username, password, "location");
 			agent.connect();
 			//agent.registerBuilding(); // TODO: implement registration to building
-			agent.setAndroidContext(context);
 			mHandler.post(new Runnable() {
 		          public void run() {
 		        	  try {
