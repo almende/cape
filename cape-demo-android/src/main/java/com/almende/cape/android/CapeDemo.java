@@ -46,7 +46,7 @@ public class CapeDemo extends Activity {
         try {
         	AgentFactory af = AgentFactory.createInstance();
         	Map<String, Object> params = new HashMap<String,Object>();
-        	params.put("appContext", ctx);
+        	params.put("AppContext", ctx);
         
         	af.setContextFactory(new AndroidContextFactory(af, params));
         	af.setSchedulerFactory(new RunnableSchedulerFactory(af, ".runnablescheduler"));
