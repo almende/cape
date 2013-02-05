@@ -1,6 +1,8 @@
 package com.almende.cape.android;
 
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import android.app.Activity;
@@ -14,8 +16,13 @@ import android.widget.TextView;
 
 import com.almende.cape.CapeClient;
 import com.almende.cape.handler.NotificationHandler;
+import com.almende.eve.agent.AgentFactory;
+import com.almende.eve.context.AndroidContextFactory;
+import com.almende.eve.scheduler.RunnableSchedulerFactory;
 
 public class CapeDemo extends Activity {
+    private Logger logger = Logger.getLogger(this.getClass().getSimpleName());;
+	
 	private EditText txtUsername;
 	private EditText txtPassword;
 	private Button btnConnect;
@@ -26,6 +33,9 @@ public class CapeDemo extends Activity {
 	private TextView lblLocation;
 	private TextView lblInfo;
 	Activity ctx = null;
+    private CapeClient cape = null;
+    private LocationSimulation locationSimulation = null;
+
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -33,6 +43,20 @@ public class CapeDemo extends Activity {
         setContentView(R.layout.activity_cape_demo);
         
         ctx = this;
+        try {
+        	AgentFactory af = AgentFactory.createInstance();
+        	Map<String, Object> params = new HashMap<String,Object>();
+        	params.put("appContext", ctx);
+        
+        	af.setContextFactory(new AndroidContextFactory(af, params));
+        	af.setSchedulerFactory(new RunnableSchedulerFactory(af, ".runnablescheduler"));
+		
+        	cape = new CapeClient(af);
+        	locationSimulation = new LocationSimulation();
+        } catch (Exception e){
+        	logger.severe("Couldn't start cape/eve framework!");
+        	e.printStackTrace();
+        }
         txtUsername = (EditText) findViewById(R.id.username);
         txtPassword = (EditText) findViewById(R.id.password);
         btnConnect = (Button) findViewById(R.id.connect);
@@ -131,6 +155,30 @@ public class CapeDemo extends Activity {
     	}
     }
     
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putBoolean("txtUsername", txtUsername.isEnabled());
+        outState.putBoolean("txtPassword", txtPassword.isEnabled());
+        outState.putBoolean("btnConnect", btnConnect.isEnabled());
+        outState.putBoolean("btnDisconnect", btnDisconnect.isEnabled());
+        outState.putBoolean("btnUseActualLocation", btnUseActualLocation.isEnabled());
+        outState.putBoolean("btnMoveAway", btnMoveAway.isEnabled());
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        if (savedInstanceState != null) {
+            txtUsername.setEnabled(savedInstanceState.getBoolean("txtUsername"));
+            txtPassword.setEnabled(savedInstanceState.getBoolean("txtPassword"));
+            btnConnect.setEnabled(savedInstanceState.getBoolean("btnConnect"));
+            btnDisconnect.setEnabled(savedInstanceState.getBoolean("btnDisconnect"));
+            btnUseActualLocation.setEnabled(savedInstanceState.getBoolean("btnUseActualLocation"));
+            btnMoveAway.setEnabled(savedInstanceState.getBoolean("btnMoveAway"));
+        }
+    }
+    
     class CapeDisconnect extends AsyncTask<Void, String, String> {
 		@Override
 		protected String doInBackground(Void... params) {
@@ -173,9 +221,5 @@ public class CapeDemo extends Activity {
     	}
     }
 
-    
-    private CapeClient cape = new CapeClient();
-    private LocationSimulation locationSimulation = new LocationSimulation();
-    
-    private Logger logger = Logger.getLogger(this.getClass().getSimpleName());;
+
 }

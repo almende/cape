@@ -14,33 +14,35 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
  * CAPE Client interface
  */
 public class CapeClient {
+	private CapeClientAgent agent = null;
+	private AgentFactory factory = null;
+	
 	/**
 	 * Constructor
 	 * @throws Exception
 	 */
 	public CapeClient() {
-		// TODO: read configuration from config file
-		factory = AgentFactory.getInstance();
+		this(AgentFactory.getInstance());
+	}
+	public CapeClient(AgentFactory factory){
 		if (factory == null) {
 			try {
 				factory = AgentFactory.createInstance();
-				
 				factory.setContextFactory(new MemoryContextFactory(factory));
-				
 				factory.setSchedulerFactory(new RunnableSchedulerFactory(factory, ".runnablescheduler"));
-				
-				String host = "openid.almende.org";
-				Integer port = 5222;
-				String service = host;
-				XmppService xmppService = new XmppService(factory);
-				xmppService.init(host, port, service);
-				factory.addTransportService(xmppService);
 			} catch (Exception e) {
 				e.printStackTrace();
+				System.err.println("Failed to init factory!");
 			}
 		}
+		String host = "openid.almende.org";
+		Integer port = 5222;
+		String service = host;
+		XmppService xmppService = new XmppService(factory);
+		xmppService.init(host, port, service);
+		factory.addTransportService(xmppService);
+		this.factory=factory;
 	}
-	
 	/**
 	 * Login to CAPE
 	 * @param username
@@ -167,6 +169,5 @@ public class CapeClient {
 		}
 	}
 	
-	private CapeClientAgent agent = null;
-	private AgentFactory factory = null;
+
 }

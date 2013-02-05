@@ -59,7 +59,7 @@ public abstract class CapeAgent extends Agent {
 			@Name("newResource") String newResource) throws Exception {
 		// TODO: do not store password! (at least not plain text)
 		
-		if (verifyAccount(oldUsername, oldPassword)) {
+		if (verifyAccount(newUsername, newPassword)) {
 			if (oldUsername != null && oldPassword != null) {
 				disconnect();
 			}
@@ -111,7 +111,9 @@ public abstract class CapeAgent extends Agent {
 		Context context = getContext();
 		String currentUsername = (String) context.get("xmppUsername");
 		String currentPassword = (String) context.get("xmppPassword");
-		
+		if (currentUsername == null) System.err.println("CurrentUsername is null");
+		if (currentPassword == null) System.err.println("currentPassword is null");
+		System.err.println("Compare:'"+currentUsername+"'/'"+currentPassword+"' to '"+username+"'/'"+password+"'");
 		return  (currentUsername == null || currentUsername.equals(username)) &&
 				(currentPassword == null || currentPassword.equals(password));
 	}

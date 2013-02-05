@@ -27,7 +27,11 @@ public class LocationSimulation {
 			if (agent != null) {
 				throw new Exception ("LocationAgent already created");
 			}
-			agent = (LocationAgent) factory.createAgent(LocationAgent.class, AGENT_ID);
+			if (factory.hasAgent(AGENT_ID)){
+				agent = (LocationAgent) factory.getAgent(AGENT_ID);
+			} else {
+				agent = (LocationAgent) factory.createAgent(LocationAgent.class, AGENT_ID);	
+			}
 			agent.setAccount(username, password, "location");
 			agent.connect();
 			//agent.registerBuilding(); // TODO: implement registration to building
