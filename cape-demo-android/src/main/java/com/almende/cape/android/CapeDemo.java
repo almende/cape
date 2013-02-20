@@ -17,8 +17,8 @@ import android.widget.TextView;
 import com.almende.cape.CapeClient;
 import com.almende.cape.handler.NotificationHandler;
 import com.almende.eve.agent.AgentFactory;
-import com.almende.eve.context.AndroidContextFactory;
 import com.almende.eve.scheduler.RunnableSchedulerFactory;
+import com.almende.eve.state.AndroidStateFactory;
 
 public class CapeDemo extends Activity {
     private Logger logger = Logger.getLogger(this.getClass().getSimpleName());;
@@ -48,7 +48,7 @@ public class CapeDemo extends Activity {
         	Map<String, Object> params = new HashMap<String,Object>();
         	params.put("AppContext", ctx);
         
-        	af.setContextFactory(new AndroidContextFactory(af, params));
+        	af.setStateFactory(new AndroidStateFactory(af, params));
         	af.setSchedulerFactory(new RunnableSchedulerFactory(af, ".runnablescheduler"));
 		
         	cape = new CapeClient(af);

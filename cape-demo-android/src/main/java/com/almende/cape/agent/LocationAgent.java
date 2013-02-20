@@ -20,7 +20,7 @@ import com.almende.eve.rpc.jsonrpc.jackson.JOM;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class LocationAgent extends CapeStateAgent {
-	/** Android Application Context, not Eve context! */
+	/** Android Application State, not Eve context! */
 	private static String BUILDING_URL = "xmpp:almende@openid.almende.org";
 	LocationManager locationManager = null;
 
@@ -50,7 +50,7 @@ public class LocationAgent extends CapeStateAgent {
 
 	public void startSensor() throws Exception {
 		stopSimulation();
-		Activity context = (Activity) getContext().get("AppContext");
+		Activity context = (Activity) getState().get("AppContext");
 		// Acquire a reference to the system Location Manager
 		locationManager = (LocationManager) context
 				.getSystemService(Context.LOCATION_SERVICE);
@@ -88,7 +88,7 @@ public class LocationAgent extends CapeStateAgent {
 	@Override
 	public Object getState(@Name("state") String state) throws Exception {
 		if (state.equals("location")) {
-			return getContext().get("location");
+			return getState().get("location");
 		} else {
 			// no information available for other states
 			throw new Exception("No information available for state '" + state
@@ -119,7 +119,7 @@ public class LocationAgent extends CapeStateAgent {
 		if (description != null) {
 			location.put("description", description);
 		}
-		getContext().put("location", location);
+		getState().put("location", location);
 
 		// trigger a change event
 		ObjectNode params = JOM.createObjectNode();
@@ -136,7 +136,7 @@ public class LocationAgent extends CapeStateAgent {
 		changeParams.put("params", params);
 		send(BUILDING_URL, "onChange", changeParams);
 		
-		Activity act = (Activity) getContext().get("AppContext");
+		Activity act = (Activity) getState().get("AppContext");
 		if (act != null) {
 			act.runOnUiThread(new MyRunnable("Location:"+lat + ":" + lng + " - "+description, act));
 			logger.info("Set location:"+lat+":"+lng+"::"+description);	
@@ -172,10 +172,10 @@ public class LocationAgent extends CapeStateAgent {
 	 * Stop simulation of the location
 	 */
 	public void stopSimulation() {
-		String taskId = (String) getContext().get("taskId");
+		String taskId = (String) getState().get("taskId");
 		if (taskId != null) {
 			getScheduler().cancelTask(taskId);
-			getContext().remove("taskId");
+			getState().remove("taskId");
 		}
 	}
 
@@ -191,7 +191,7 @@ public class LocationAgent extends CapeStateAgent {
 		long delay = Math.round((10 * Math.random()) * 1000); // 0-10 sec
 		JSONRequest request = new JSONRequest("onSimulate", null);
 		String taskId = getScheduler().createTask(request, delay);
-		getContext().put("taskId", taskId);
+		getState().put("taskId", taskId);
 	}
 
 	/**
@@ -206,8 +206,8 @@ public class LocationAgent extends CapeStateAgent {
 		try {
 			HashMap<String, Object> location = null;
 			//TODO: default naar Almende's locatie.
-			if (getContext().containsKey("location")) {
-				location = (HashMap<String, Object>) getContext().get("location");
+			if (getState().containsKey("location")) {
+				location = (HashMap<String, Object>) getState().get("location");
 			}
 
 			Double lat = (Double) location.get("lat");
@@ -236,7 +236,7 @@ public class LocationAgent extends CapeStateAgent {
 	 * @throws Exception
 	 */
 	public void registerBuilding() throws Exception {
-		String userId = (String) getContext().get("xmppUsername");
+		String userId = (String) getState().get("xmppUsername");
 		logger.info("registering userId " + userId + " at building agent...");
 		if (userId != null) {
 			// register our use at the building agent
@@ -256,7 +256,7 @@ public class LocationAgent extends CapeStateAgent {
 	 * @throws Exception
 	 */
 	public void unregisterBuilding() throws Exception {
-		String userId = (String) getContext().get("xmppUsername");
+		String userId = (String) getState().get("xmppUsername");
 		logger.info("unregistering userId " + userId + " at building agent...");
 		if (userId != null) {
 			// register our use at the building agent

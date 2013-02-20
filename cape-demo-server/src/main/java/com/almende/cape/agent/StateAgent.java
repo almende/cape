@@ -19,7 +19,7 @@ public class StateAgent extends CapeStateAgent {
 	@Override
 	public Object getState(@Name("state") String state) {
 		if (state.equals("location")) {
-			return getContext().get("location");
+			return getState().get("location");
 		}
 		else {
 			// TODO: implement other states
@@ -49,7 +49,7 @@ public class StateAgent extends CapeStateAgent {
 		if (description != null) {
 			location.put("description", description);
 		}
-		getContext().put("location", location);
+		getState().put("location", location);
 		
 		// trigger a change event
 		ObjectNode params = JOM.createObjectNode();
@@ -68,10 +68,10 @@ public class StateAgent extends CapeStateAgent {
 	 * Stop simulation of the location
 	 */
 	public void stopSimulation() {
-		String taskId = (String) getContext().get("taskId");
+		String taskId = (String) getState().get("taskId");
 		if (taskId != null) {
 			getScheduler().cancelTask(taskId);
-			getContext().remove("taskId");
+			getState().remove("taskId");
 		}
 	}
 	
@@ -87,7 +87,7 @@ public class StateAgent extends CapeStateAgent {
 		long delay = Math.round((10 + 10 * Math.random()) * 1000); // 10-20 sec
 		JSONRequest request = new JSONRequest("onSimulate", null);
 		String taskId = getScheduler().createTask(request, delay);
-		getContext().put("taskId", taskId);
+		getState().put("taskId", taskId);
 	}
 	
 	/**

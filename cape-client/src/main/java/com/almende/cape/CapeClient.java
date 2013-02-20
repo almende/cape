@@ -4,8 +4,8 @@ import com.almende.cape.agent.CapeClientAgent;
 import com.almende.cape.handler.NotificationHandler;
 import com.almende.cape.handler.StateChangeHandler;
 import com.almende.eve.agent.AgentFactory;
-import com.almende.eve.context.MemoryContextFactory;
 import com.almende.eve.scheduler.RunnableSchedulerFactory;
+import com.almende.eve.state.MemoryStateFactory;
 import com.almende.eve.transport.xmpp.XmppService;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -28,7 +28,7 @@ public class CapeClient {
 		if (factory == null) {
 			try {
 				factory = AgentFactory.createInstance();
-				factory.setContextFactory(new MemoryContextFactory(factory));
+				factory.setStateFactory(new MemoryStateFactory(factory));
 				factory.setSchedulerFactory(new RunnableSchedulerFactory(factory, ".runnablescheduler"));
 			} catch (Exception e) {
 				e.printStackTrace();

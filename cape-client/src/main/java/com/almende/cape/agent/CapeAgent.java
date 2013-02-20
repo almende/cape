@@ -4,12 +4,12 @@ import java.util.logging.Logger;
 
 import com.almende.eve.agent.Agent;
 import com.almende.eve.agent.AgentFactory;
-import com.almende.eve.context.Context;
 import com.almende.eve.agent.annotation.Access;
 import com.almende.eve.agent.annotation.AccessType;
 import com.almende.eve.agent.annotation.Name;
 import com.almende.eve.agent.annotation.Required;
 import com.almende.eve.rpc.jsonrpc.jackson.JOM;
+import com.almende.eve.state.State;
 import com.almende.eve.transport.xmpp.XmppService;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -40,7 +40,7 @@ public abstract class CapeAgent extends Agent {
 	
 	// TODO: remove this method getEverything!!!
 	public Object getEverything() {
-		return getContext();
+		return getState();
 	}
 	
 	/**
@@ -64,7 +64,7 @@ public abstract class CapeAgent extends Agent {
 				disconnect();
 			}
 			
-			Context context = getContext();
+			State context = getState();
 			context.put("xmppUsername", newUsername);
 			context.put("xmppPassword", newPassword);
 			if (newResource != null) {
@@ -94,7 +94,7 @@ public abstract class CapeAgent extends Agent {
 			}
 			catch (Exception e) {}
 			
-			Context context = getContext();
+			State context = getState();
 			context.remove("xmppUsername");
 			context.remove("xmppPassword");
 			context.remove("xmppResource");
@@ -108,7 +108,7 @@ public abstract class CapeAgent extends Agent {
 	 * @param password
 	 */
 	protected boolean verifyAccount(String username, String password) {
-		Context context = getContext();
+		State context = getState();
 		String currentUsername = (String) context.get("xmppUsername");
 		String currentPassword = (String) context.get("xmppPassword");
 		if (currentUsername == null) System.err.println("CurrentUsername is null");
@@ -126,7 +126,7 @@ public abstract class CapeAgent extends Agent {
 		AgentFactory factory = getAgentFactory();
 		XmppService service = (XmppService) factory.getTransportService("xmpp");
 		if (service != null) {
-			Context context = getContext();
+			State context = getState();
 			String username = (String) context.get("xmppUsername");
 			String password = (String) context.get("xmppPassword");
 			String resource = (String) context.get("xmppResource");
@@ -186,7 +186,7 @@ public abstract class CapeAgent extends Agent {
 	}
 
 	protected String getUsername() {
-		return (String) getContext().get("xmppUsername");
+		return (String) getState().get("xmppUsername");
 	}
 	
 	/**
