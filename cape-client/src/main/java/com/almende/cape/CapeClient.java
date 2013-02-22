@@ -28,7 +28,7 @@ public class CapeClient {
 		if (factory == null) {
 			try {
 				factory = AgentFactory.createInstance();
-				factory.setStateFactory(new MemoryStateFactory(factory));
+				factory.setStateFactory(new MemoryStateFactory());
 				factory.setSchedulerFactory(new RunnableSchedulerFactory(factory, ".runnablescheduler"));
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -38,8 +38,7 @@ public class CapeClient {
 		String host = "openid.almende.org";
 		Integer port = 5222;
 		String service = host;
-		XmppService xmppService = new XmppService(factory);
-		xmppService.init(host, port, service);
+		XmppService xmppService = new XmppService(factory,host, port, service);
 		factory.addTransportService(xmppService);
 		this.factory=factory;
 	}

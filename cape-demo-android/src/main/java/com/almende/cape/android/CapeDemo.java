@@ -21,7 +21,7 @@ import com.almende.eve.scheduler.RunnableSchedulerFactory;
 import com.almende.eve.state.AndroidStateFactory;
 
 public class CapeDemo extends Activity {
-    private Logger logger = Logger.getLogger(this.getClass().getSimpleName());;
+    private Logger logger = Logger.getLogger(this.getClass().getSimpleName());
 	
 	private EditText txtUsername;
 	private EditText txtPassword;
