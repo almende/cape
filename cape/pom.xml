@@ -7,7 +7,7 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
-	<name>EVE</name>
+	<name>CAPE</name>
 	<url>http://almende.github.com/cape</url>
 
 	<organization>
@@ -23,13 +23,6 @@
 	</modules>
      -->
  
-	<repositories>
-		<repository>
-			<id>eve</id>
-			<url>https://raw.github.com/almende/maven/master/</url>
-		</repository>
-	</repositories>
-
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

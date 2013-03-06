@@ -11,7 +11,7 @@
 	<artifactId>cape-client</artifactId>
 
 	<properties>
-		<eve.version>0.18</eve.version>
+		<eve.version>1.0.2</eve.version>
 		<neo4j.version>1.9.M01</neo4j.version>
 	</properties>
 
