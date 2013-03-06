@@ -5,15 +5,12 @@
 	<parent>
 		<groupId>com.almende.cape</groupId>
 		<artifactId>cape</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
+		<version>0.0.2-SNAPSHOT</version>
+		<relativePath>../cape/pom.xml</relativePath>
 	</parent>
 
+	<name>CAPE Client</name>
 	<artifactId>cape-client</artifactId>
-
-	<properties>
-		<eve.version>1.0.2</eve.version>
-		<neo4j.version>1.9.M01</neo4j.version>
-	</properties>
 
 	<dependencies>
 		<dependency>

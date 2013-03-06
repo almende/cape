@@ -4,15 +4,16 @@
 	<parent>
 		<groupId>com.almende.cape</groupId>
 		<artifactId>cape</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
+		<version>0.0.2-SNAPSHOT</version>
+		<relativePath>../cape/pom.xml</relativePath>
 	</parent>
 
+	<name>CAPE Demonstration Server</name>
 	<artifactId>cape-demo-server</artifactId>
 	<packaging>war</packaging>
 
 	<properties>
 		<cape.server.finalName>cape</cape.server.finalName>
-
 		<neo4j.version>1.9.M01</neo4j.version>
 		<jetty.version>8.1.8.v20121106</jetty.version>
 	</properties>
@@ -23,27 +24,21 @@
 			<artifactId>cape-client</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
-
-		<!-- <dependency> <groupId>org.neo4j</groupId> <artifactId>neo4j</artifactId> 
-			<version>${neo4j.version}</version> </dependency> -->
 		<dependency>
 			<groupId>org.neo4j.app</groupId>
 			<artifactId>neo4j-server</artifactId>
 			<version>${neo4j.version}</version>
 		</dependency>
-		
 		<dependency>
 			<groupId>com.novell.ldap</groupId>
 			<artifactId>jldap</artifactId>
 			<version>4.3</version>
 		</dependency>
-
 		<dependency>
 			<groupId>com.google.collections</groupId>
 			<artifactId>google-collections</artifactId>
 			<version>1.0</version>
 		</dependency>
-
 		<dependency>
 			<groupId>org.mortbay.jetty</groupId>
 			<artifactId>jetty-maven-plugin</artifactId>

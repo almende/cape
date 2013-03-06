@@ -6,17 +6,17 @@
 	<parent>
 		<groupId>com.almende.cape</groupId>
 		<artifactId>cape</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
+		<version>0.0.2-SNAPSHOT</version>
+		<relativePath>../cape/pom.xml</relativePath>
 	</parent>
 
+	<name>CAPE Android Example</name>
 	<artifactId>cape-demo-android</artifactId>
 	<packaging>apk</packaging>
-	<name>cape-demo-android</name>
 
 	<properties>
 		<android.version>4.1.1.4</android.version>
 		<android.target>17</android.target>
-		<eve.version>1.0.2</eve.version>
 		<android-maven-plugin.version>3.1.1</android-maven-plugin.version>
 		<maven-compiler-plugin.version>2.3.2</maven-compiler-plugin.version>
 	</properties>
@@ -94,10 +94,6 @@
 				</configuration>
 				<extensions>true</extensions>
 			</plugin>
-
-			<!-- <plugin> <artifactId>maven-compiler-plugin</artifactId> <version>${maven-compiler-plugin.version}</version> 
-				<configuration> <source>1.6</source> <target>1.6</target> </configuration> 
-				</plugin> -->
 		</plugins>
 	</build>
 </project>

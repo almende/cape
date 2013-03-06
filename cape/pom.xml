@@ -4,7 +4,7 @@
 
 	<groupId>com.almende.cape</groupId>
 	<artifactId>cape</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.2-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<name>CAPE</name>
@@ -15,16 +15,14 @@
 		<url>http://www.almende.com/</url>
 	</organization>
 
-    <!-- TODO: create a separate project to build all maven modules?
 	<modules>
 		<module>../cape-client</module>
 		<module>../cape-demo-android</module>
 		<module>../cape-demo-server</module>
 	</modules>
-     -->
- 
 
 	<properties>
+		<eve.version>1.0.3</eve.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.scm.version>1.8.1</maven.scm.version>
 		<wagon-scm.version>2.2</wagon-scm.version>
