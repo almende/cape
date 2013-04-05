@@ -1,7 +1,11 @@
 package com.almende.cape.agent;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.logging.Logger;
 
+import com.almende.cape.entity.DataSource;
 import com.almende.eve.agent.Agent;
 import com.almende.eve.agent.AgentFactory;
 import com.almende.eve.agent.annotation.Access;
@@ -11,6 +15,7 @@ import com.almende.eve.agent.annotation.Required;
 import com.almende.eve.rpc.jsonrpc.jackson.JOM;
 import com.almende.eve.state.State;
 import com.almende.eve.transport.xmpp.XmppService;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
@@ -20,7 +25,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
  */
 public abstract class CapeAgent extends Agent {
 	// TODO: do not hard-code the merlin agent url.
-    protected static String MERLIN_URL = "xmpp:merlin@openid.almende.org"; 
+    protected static String MERLIN_URL = "xmpp:merlin@openid.ask-cs.com"; 
 
     /**
 	 * Set xmpp account for the agent.
@@ -141,6 +146,7 @@ public abstract class CapeAgent extends Agent {
 					"Please set a username and password using the method setAccount first.");
 			}
 			service.connect(getId(), username, password, resource);
+			System.out.println("Connected to xmpp");
 		}
 		else {
 			throw new Exception("No XMPP service registered");
@@ -189,6 +195,10 @@ public abstract class CapeAgent extends Agent {
 		return (String) getState().get("xmppUsername");
 	}
 	
+	protected String getPassword() {
+		return (String) getState().get("xmppPassword");
+	}
+	
 	/**
 	 * Unregister the agent as providing data information of a specific type
 	 * @param dataType
@@ -218,7 +228,7 @@ public abstract class CapeAgent extends Agent {
 	 * @throws Exception
 	 */
 	@Access(AccessType.UNAVAILABLE)
-	public String findDataSource(String userId, String dataType) throws Exception {
+	public List<DataSource> findDataSource(String userId, String dataType) throws Exception {
 		String method = "find";
 		ObjectNode params = JOM.createObjectNode();
 		params.put("userId", userId);
@@ -227,15 +237,13 @@ public abstract class CapeAgent extends Agent {
 		logger.info("Requesting the MerlinAgent for a dataSource with userId=" + 
 				userId + " and dataType=" + dataType);
 
-		ArrayNode contactSources = send(MERLIN_URL, method, params, ArrayNode.class);
-		if (contactSources.size() > 0) {
-			ObjectNode contactSource = (ObjectNode) contactSources.get(0);
-
-			logger.info("Retrieved dataSource from MerlinAgent: " + contactSource);
-
-			return contactSource.get("agentUrl").asText();
+		List<DataSource> agentSources = new ArrayList<DataSource>();
+		ArrayNode dataSources = send(MERLIN_URL, method, params, ArrayNode.class);
+		Iterator<JsonNode> it = dataSources.elements(); 
+		while(it.hasNext()) {
+			agentSources.add(JOM.getInstance().convertValue(it.next(), DataSource.class));
 		}
-		return null;
+		return agentSources;
 	}
 
 	/**
@@ -252,7 +260,8 @@ public abstract class CapeAgent extends Agent {
 		String dataType = "dialog";
 		
 		// find an agent which can handle a dialog with the user
-		String notificationAgentUrl = findDataSource(userId, dataType);
+		List<DataSource> dataSources = findDataSource(userId, dataType);
+		String notificationAgentUrl = dataSources.get(0).getAgentUrl();
 		if (notificationAgentUrl == null) {
 			throw new Exception(
 					"No data source found supporting a dialog with user " + userId);
@@ -276,7 +285,8 @@ public abstract class CapeAgent extends Agent {
 	public ArrayNode getContacts(ObjectNode filter) throws Exception {
 		String userId = getId();
 		String dataType = "contacts";
-		String contactAgentUrl = findDataSource(userId, dataType);
+		List<DataSource> dataSources = findDataSource(userId, dataType);
+		String contactAgentUrl = dataSources.get(0).getAgentUrl();
 		if (contactAgentUrl == null) {
 			throw new Exception(
 					"No data source found containing contacts of user " + getId());

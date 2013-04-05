@@ -1,6 +1,7 @@
 package com.almende.cape;
 
 import com.almende.cape.agent.CapeClientAgent;
+import com.almende.cape.handler.MessageHandler;
 import com.almende.cape.handler.NotificationHandler;
 import com.almende.cape.handler.StateChangeHandler;
 import com.almende.eve.agent.AgentFactory;
@@ -35,7 +36,8 @@ public class CapeClient {
 				System.err.println("Failed to init factory!");
 			}
 		}
-		String host = "openid.almende.org";
+		//String host = "openid.almende.org";
+		String host = "openid.ask-cs.com";
 		Integer port = 5222;
 		String service = host;
 		XmppService xmppService = new XmppService(factory,host, port, service);
@@ -55,12 +57,13 @@ public class CapeClient {
 		// create a user agent if not existing
 		CapeClientAgent agent = (CapeClientAgent) factory.getAgent(username);
 		if (agent == null) {
+			System.out.println("Creating new agent");
 			agent = (CapeClientAgent) factory.createAgent(
 					CapeClientAgent.class, username);
-			
-			String resource = "client";
-			agent.setAccount(username, password, resource);
 		}
+		
+		String resource = "client";
+		agent.setAccount(username, password, resource);
 		
 		// connect to xmpp service
 		agent.connect();
@@ -85,6 +88,13 @@ public class CapeClient {
 			agent.destroy();
 			agent = null;
 		}
+	}
+	
+	public void onMessage(MessageHandler messageHandler) throws Exception {
+		if (agent == null) {
+			throw new Exception("Not logged in");
+		}
+		agent.setMessageHandler(messageHandler);
 	}
 	
 	/**

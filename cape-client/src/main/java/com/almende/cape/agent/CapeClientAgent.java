@@ -1,54 +1,33 @@
 package com.almende.cape.agent;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
-import com.almende.cape.handler.NotificationHandler;
+import com.almende.cape.entity.DataSource;
+import com.almende.cape.entity.Message;
+import com.almende.cape.handler.MessageHandler;
 import com.almende.cape.handler.StateChangeHandler;
 import com.almende.eve.agent.annotation.Name;
 import com.almende.eve.agent.annotation.Required;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-public class CapeClientAgent extends CapeDialogAgent {
-	/**
-	 * Attach a notification handler to the agent.
-	 * The notification handler will be available as long as the agent is 
-	 * instantiated, but is not persisted. 
-	 * @param notificationHandler
-	 * @throws Exception 
-	 */
-	public void setNotificationHandler(NotificationHandler handler) 
-			throws Exception {
-		notificationHandlers.put(getId(), handler);
-	}
-
-	/**
-	 * Remove the currently attached notification handler.
-	 * @throws Exception 
-	 */
-	public void removeNotificationHandler() throws Exception {
-		if (notificationHandlers.containsKey(getId())) {
-			notificationHandlers.remove(getId());
-		}
+public class CapeClientAgent extends CapeMessageAgent {
+	
+	public void setMessageHandler(MessageHandler handler) {
+		messageHandlers.put(getId(), handler);
 	}
 	
-	/**
-	 * Receive a notification and dispatch it to the attached notification 
-	 * handler. If no notification handler is attached, an exception will be
-	 * thrown.
-	 * @param message
-	 * @throws Exception 
-	 */
 	@Override
-	public void onNotification(@Name("message") String message) throws Exception {
-		NotificationHandler handler = notificationHandlers.get(getId());
+	public void onMessage(@Name("message") Message message) throws Exception {
+		MessageHandler handler = messageHandlers.get(getId());
 		if (handler != null) {
-			handler.onNotification(message);			
+			handler.onMessage(message);			
 		}
 		else {
-			throw new Exception ("Cannot deliver notification: " +
-					"no notification handler set.");
+			throw new Exception ("Cannot deliver message: " +
+					"no message handler set.");
 		}
 	}
 
@@ -82,7 +61,8 @@ public class CapeClientAgent extends CapeDialogAgent {
 
 		// TODO: should run a process which regularly refreshes the url for the datasource
 		logger.info("Registering state handler for userId=" + userId + ", state=" + state);
-		String agentUrl = findDataSource(userId, "state");
+		List<DataSource> dataSources = findDataSource(userId, "state");
+		String agentUrl = dataSources.get(0).getAgentUrl();
 		if (agentUrl == null) {
 			throw new Exception("No agent found providing state information for " +
 					"user " + userId);
@@ -168,8 +148,8 @@ public class CapeClientAgent extends CapeDialogAgent {
 	//       per user right now, as we cannot have a single, continuously 
 	//       instantiated agent: the AgentFactory  will instantiate a new 
 	//       instance of our agent on incoming calls.
-	private static Map<String, NotificationHandler> notificationHandlers = 
-			new ConcurrentHashMap<String, NotificationHandler>();
+	private static Map<String, MessageHandler> messageHandlers = 
+			new ConcurrentHashMap<String, MessageHandler>();
 	private static Map<String, StateSubscription> stateChangeHandlers = 
 			new ConcurrentHashMap<String, StateSubscription>();
 	
