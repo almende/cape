@@ -310,7 +310,7 @@ public class BuildingAgent extends CapeAgent {
 					"Hello " + userId + ". You are the last one in the building. " +
 					"Please don't forget to lock up everyting properly when you leave. " +
 				    "Thanks, your BuildingAgent.";
-			sendNotification(userId, message);
+			//sendNotification(userId, message);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

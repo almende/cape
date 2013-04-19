@@ -1,17 +1,14 @@
 package com.almende.cape.agent;
 
-import com.almende.cape.entity.Message;
-import com.almende.eve.agent.annotation.Name;
+import com.almende.cape.agent.intf.CapeMessageAgentIntf;
 
-public abstract class CapeMessageAgent extends CapeAgent {
+public abstract class CapeMessageAgent extends CapeAgent implements CapeMessageAgentIntf {
 	private static String DATA_TYPE = "message";
-	
-	public abstract void onMessage(@Name("message") Message message) throws Exception;
 
 	@Override
 	public void connect () throws Exception {
 		super.connect();
-		register(DATA_TYPE);
+		register(DATA_TYPE, null);
 	}
 	
 	@Override

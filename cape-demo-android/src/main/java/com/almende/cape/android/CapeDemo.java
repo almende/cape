@@ -15,7 +15,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.almende.cape.CapeClient;
-import com.almende.cape.handler.NotificationHandler;
+import com.almende.cape.entity.Message;
+import com.almende.cape.handler.MessageHandler;
 import com.almende.eve.agent.AgentFactory;
 import com.almende.eve.scheduler.RunnableSchedulerFactory;
 import com.almende.eve.state.AndroidStateFactory;
@@ -113,11 +114,11 @@ public class CapeDemo extends Activity {
     			// login to cape
     			logger.info("connecting user " + username);
     			cape.login(username, password);
-    			cape.onNotification(new NotificationHandler() {
+    			cape.onMessage(new MessageHandler() {
 					@Override
-					public void onNotification(String message) {
-						logger.info("Notification: " + message);
-						lblInfo.setText(message);
+					public void onMessage(Message message) {
+						logger.info("Notification: " + message.getMessage());
+						lblInfo.setText(message.getMessage());
 						lblInfo.postInvalidate();
 					}
 				});

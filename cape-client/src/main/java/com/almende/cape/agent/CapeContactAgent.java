@@ -1,16 +1,14 @@
 package com.almende.cape.agent;
 
-import com.almende.eve.agent.annotation.Name;
+import com.almende.cape.agent.intf.CapeGroupAgentIntf;
 
-public abstract class CapeContactAgent extends CapeAgent {
-	private static String DATA_TYPE = "contacts";
-	
-	public abstract String getContacts(@Name("filter") String filter) throws Exception;
-	
+public abstract class CapeContactAgent extends CapeAgent implements CapeGroupAgentIntf {
+	private static String DATA_TYPE = "group";
+		
 	@Override
 	public void connect () throws Exception {
 		super.connect();
-		register(DATA_TYPE);
+		register(DATA_TYPE, null);
 	}
 	
 	@Override

@@ -1,9 +1,11 @@
 package com.almende.cape.agent;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.almende.cape.entity.timeline.Slot;
 import com.almende.eve.rpc.jsonrpc.JSONRequest;
 import com.almende.eve.agent.annotation.Name;
 import com.almende.eve.agent.annotation.Required;
@@ -11,21 +13,6 @@ import com.almende.eve.rpc.jsonrpc.jackson.JOM;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class StateAgent extends CapeStateAgent {
-	/**
-	 * Get the current state
-	 * @param state    Available values: "location"
-	 * @return
-	 */
-	@Override
-	public Object getState(@Name("state") String state) {
-		if (state.equals("location")) {
-			return getState().get("location");
-		}
-		else {
-			// TODO: implement other states
-			return null;
-		}
-	}
 	
 	/**
 	 * Change the current location
@@ -121,5 +108,37 @@ public class StateAgent extends CapeStateAgent {
 	@Override
 	public String getVersion() {
 		return "0.1";
+	}
+
+	@Override
+	public boolean setSlot(long startTime, long endTime, String desc,
+			String occurence) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public ArrayList<Slot> getSlots(long startTime, long endTime,
+			String occurence) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ArrayList<Slot> getSlotsCombined(long startTime, long endTime) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Slot getCurrentSlot(String occurence) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Slot getCurrentSlotCombined() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

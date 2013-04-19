@@ -1,5 +1,6 @@
 package com.almende.cape.agent;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -13,6 +14,7 @@ import android.os.Bundle;
 import android.widget.TextView;
 
 import com.almende.cape.android.R;
+import com.almende.cape.entity.timeline.Slot;
 import com.almende.eve.agent.annotation.Name;
 import com.almende.eve.agent.annotation.Required;
 import com.almende.eve.rpc.jsonrpc.JSONRequest;
@@ -74,25 +76,6 @@ public class LocationAgent extends CapeStateAgent {
 	public void stopSensor() {
 		if (locationManager != null && locationListener != null){
 			locationManager.removeUpdates(locationListener);
-		}
-	}
-
-	/**
-	 * Get the current state
-	 * 
-	 * @param state
-	 *            Available values: "location"
-	 * @return
-	 * @throws Exception
-	 */
-	@Override
-	public Object getState(@Name("state") String state) throws Exception {
-		if (state.equals("location")) {
-			return getState().get("location");
-		} else {
-			// no information available for other states
-			throw new Exception("No information available for state '" + state
-					+ "', " + "only information for 'location' is available.");
 		}
 	}
 
@@ -283,5 +266,37 @@ public class LocationAgent extends CapeStateAgent {
 		return "0.1";
 	}
 
-    private static Logger logger = Logger.getLogger(LocationAgent.class.getSimpleName());;
+    private static Logger logger = Logger.getLogger(LocationAgent.class.getSimpleName());
+
+	@Override
+	public boolean setSlot(long startTime, long endTime, String desc,
+			String occurence) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public ArrayList<Slot> getSlots(long startTime, long endTime,
+			String occurence) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ArrayList<Slot> getSlotsCombined(long startTime, long endTime) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Slot getCurrentSlot(String occurence) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Slot getCurrentSlotCombined() {
+		// TODO Auto-generated method stub
+		return null;
+	};
 }

@@ -2,7 +2,6 @@ package com.almende.cape;
 
 import com.almende.cape.agent.CapeClientAgent;
 import com.almende.cape.handler.MessageHandler;
-import com.almende.cape.handler.NotificationHandler;
 import com.almende.cape.handler.StateChangeHandler;
 import com.almende.eve.agent.AgentFactory;
 import com.almende.eve.scheduler.RunnableSchedulerFactory;
@@ -79,7 +78,7 @@ public class CapeClient {
 	public void logout() throws Exception {
 		if (agent != null) {
 			// remove any handlers
-			agent.removeNotificationHandler();
+			agent.removeMessageHandler();
 			agent.removeStateChangeHandlers();
 			
 			// disconnect from xmpp service
@@ -96,42 +95,6 @@ public class CapeClient {
 		}
 		agent.setMessageHandler(messageHandler);
 	}
-	
-	/**
-	 * Send a notification to the logged in user
-	 * @param message
-	 * @throws Exception 
-	 */
-	public void sendNotification(String message) throws Exception {
-		agent.sendNotification(null, message);
-	}
-
-	/**
-	 * Send a notification to a user
-	 * @param userId
-	 * @param message
-	 * @throws Exception 
-	 */
-	public void sendNotification(String userId, String message) 
-			throws Exception {
-		if (agent == null) {
-			throw new Exception("Not logged in");
-		}
-		agent.sendNotification(userId, message);
-	}
-
-	/**
-	 * Set a handler for incoming notifications
-	 * @param handler
-	 * @throws Exception 
-	 */
-	public void onNotification(NotificationHandler handler) 
-			throws Exception {
-		if (agent == null) {
-			throw new Exception("Not logged in");
-		}
-		agent.setNotificationHandler(handler);
-	}
 	/**
 	 * Set a handler to be triggered when a users state changes
 	 * @param notificationHandler
@@ -145,7 +108,7 @@ public class CapeClient {
 	
 	/**
 	 * Set a handler to be triggered when a users state changes
-	 * @param notificationHandler
+	 * @param notificationHandlerd
 	 * @throws Exception 
 	 */
 	public void onStateChange(String userId, String state, 

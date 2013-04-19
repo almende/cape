@@ -5,6 +5,7 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -20,6 +21,7 @@ import org.neo4j.kernel.Traversal;
 import org.neo4j.kernel.Uniqueness;
 
 import com.almende.cape.DB;
+import com.almende.cape.entity.Group;
 import com.almende.eve.agent.AgentFactory;
 import com.almende.eve.agent.annotation.Name;
 import com.almende.eve.transport.xmpp.XmppService;
@@ -260,8 +262,8 @@ public class ContactAgent extends CapeContactAgent {
 		resultWriter.flush();
 		return resultWriter.toString();
 	}
-	public String createGroup(@Name("group") String json){
-		return "{}";
+	public Group createGroup(@Name("group") String json){
+		return null;
 	}
 	public String updateGroup(@Name("group") String json){
 		return "{}";
@@ -279,4 +281,64 @@ public class ContactAgent extends CapeContactAgent {
 		return "0.2";
 	}
 
+	@Override
+	public Group updateGroup(String groupId, Group newGroup) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void removeGroup(String groupId) throws Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Set<Group> getGroups() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Group getGroup(String id) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Set<String> getGroupMembers(String groupId) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void addMembers(String groupId, Set<String> agentIds)
+			throws Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void addMember(String groupId, String agentId) throws Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void removeMember(String groupId, String agentId) throws Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void removeMemberFromAllGroups(String agentId) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Set<String> getAllMembers() throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

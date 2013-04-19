@@ -1,21 +1,7 @@
 package com.almende.cape.agent;
 
-import com.almende.eve.agent.annotation.Name;
+import com.almende.cape.agent.intf.CapeStateAgentIntf;
 
-public abstract class CapeStateAgent extends CapeAgent {
+public abstract class CapeStateAgent extends CapeAgent implements CapeStateAgentIntf {
 	private static String DATA_TYPE = "state";
-	
-	public abstract Object getState(@Name("state") String state) throws Exception;
-	
-	@Override
-	public void connect () throws Exception {
-		super.connect();
-		register(DATA_TYPE);
-	}
-	
-	@Override
-	public void disconnect () throws Exception {
-		unregister(DATA_TYPE);
-		super.disconnect();
-	}
 }

@@ -3,7 +3,8 @@ package com.almende.cape.test;
 import java.util.Scanner;
 
 import com.almende.cape.CapeClient;
-import com.almende.cape.handler.NotificationHandler;
+import com.almende.cape.entity.Message;
+import com.almende.cape.handler.MessageHandler;
 import com.almende.cape.handler.StateChangeHandler;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 
@@ -21,10 +22,11 @@ public class TestCapeClient {
 
 			//cape.sendNotification("gloria", "hello gloria!");
 			
-			cape.onNotification(new NotificationHandler() {
+			cape.onMessage(new MessageHandler() {
+				
 				@Override
-				public void onNotification(String message) {
-					System.out.println("Notification: " + message);
+				public void onMessage(Message message) {
+					System.out.println("Notification: " + message.getMessage());
 				}
 			});
 

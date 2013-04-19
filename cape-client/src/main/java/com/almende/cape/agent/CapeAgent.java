@@ -171,14 +171,18 @@ public abstract class CapeAgent extends Agent {
 	/**
 	 * Register the agent as providing data information of a specific type
 	 * @param dataType
+	 * @param direction (default = consumer)
 	 * @throws Exception
 	 */
-	protected void register(@Name("dataType") String dataType) throws Exception {
+	protected void register(@Name("dataType") String dataType, @Name("direction") @Required(false) String direction) throws Exception {
 		String username = getUsername();
 		if (username == null) {
 			throw new IllegalArgumentException("No username set. " +
 					"Set username and password first using setAccount().");
 		}
+		
+		if(direction == null)
+			direction = "consumer";
 		
 		String method = "register";
 		ObjectNode params = JOM.createObjectNode();
@@ -186,6 +190,7 @@ public abstract class CapeAgent extends Agent {
 		dataSource.put("userId", username);
 		dataSource.put("agentUrl", getXmppUrl());
 		dataSource.put("dataType", dataType);
+		dataSource.put("direction", direction);
 		params.put("dataSource", dataSource);
 		// TODO: replace ObjectNode with DataSource
 		send(MERLIN_URL, method, params);		

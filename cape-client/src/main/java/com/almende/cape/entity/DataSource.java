@@ -29,6 +29,14 @@ public class DataSource implements Serializable {
 	public void setDataType(String dataType) {
 		this.dataType = dataType;
 	}
+	
+	public String getDirection() {
+		return direction;
+	}
+	
+	public void setDirection(String direction) {
+		this.direction = direction;
+	}
 
 	@Override
 	public boolean equals(Object obj) {
@@ -51,4 +59,5 @@ public class DataSource implements Serializable {
 	private String userId = null;
 	private String agentUrl = null;
 	private String dataType = null;
+	private String direction = null;
 }
