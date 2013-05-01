@@ -94,7 +94,7 @@ public class BuildingAgent extends CapeAgent {
 		
 		// add the user to the list with registered users
 		State context = getState();
-		List<Person> users = (List<Person>) context.get("users");
+		ArrayList<Person> users = (ArrayList<Person>) context.get("users");
 		if (users == null) {
 			users = new ArrayList<Person>();
 		}	
@@ -112,7 +112,7 @@ public class BuildingAgent extends CapeAgent {
 		
 		// add the user to the list with registered users
 		State context = getState();
-		List<Person> users = (List<Person>) context.get("users");
+		ArrayList<Person> users = (ArrayList<Person>) context.get("users");
 		if (users != null) {
 			int i = 0;
 			while (i < users.size()) {
@@ -209,7 +209,7 @@ public class BuildingAgent extends CapeAgent {
 		
 		// find the user from the list, and update its location
 		State context = getState();
-		List<Person> users = (List<Person>) context.get("users");
+		ArrayList<Person> users = (ArrayList<Person>) context.get("users");
 		if (users != null) {
 			// calculate the number of present users
 			List<Person> presentUsers = filter(users, true);

@@ -26,7 +26,7 @@ public class StateAgent extends CapeStateAgent {
 			@Required(false) @Name("lng") Double lng, 
 			@Required(false) @Name("description") String description) throws Exception {
 		// store the new location
-		Map<String, Object> location = new HashMap<String, Object>();
+		HashMap<String, Object> location = new HashMap<String, Object>();
 		if (lat != null) {
 			location.put("lat", lat);
 		}
