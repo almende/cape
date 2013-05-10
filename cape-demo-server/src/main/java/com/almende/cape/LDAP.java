@@ -16,7 +16,7 @@ public class LDAP  {
 	
 	public static LDAPConnection get() throws LDAPException{
 		if (conn == null){
-			LDAPConnection conn = new LDAPConnection();
+			conn = new LDAPConnection();
 			conn.connect(HOST,PORT);
 			conn.bind(LDAPConnection.LDAP_V3,"cn=admin,dc=cape,dc=almende,dc=org", "admin4almende".getBytes());
 		}

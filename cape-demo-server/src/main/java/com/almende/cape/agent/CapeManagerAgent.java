@@ -3,7 +3,6 @@ package com.almende.cape.agent;
 import com.almende.cape.LDAP;
 import com.almende.eve.agent.Agent;
 import com.almende.eve.agent.annotation.Name;
-import com.almende.eve.agent.annotation.Required;
 import com.novell.ldap.LDAPAttribute;
 import com.novell.ldap.LDAPAttributeSet;
 import com.novell.ldap.LDAPConnection;
@@ -13,14 +12,19 @@ import com.novell.ldap.LDAPException;
 public class CapeManagerAgent extends Agent {
 	public String registerAgent(@Name("username") String username,
 			@Name("domain") String domain, @Name("password") String password,
-			@Required(false) @Name("givenname") String givenname,
-			@Required(false) @Name("surname") String surname) throws Exception {
+			@Name("givenname") String givenname, @Name("surname") String surname)
+			throws Exception {
+		LDAPConnection conn = null;
 		try {
-			LDAPConnection conn = LDAP.get();
+			conn = LDAP.get();
+		} catch (LDAPException e) {
+			throw new Exception("Sorry, couldn't connect to LDAP server", e);
+		}
+		try {
 			LDAPAttributeSet attr = new LDAPAttributeSet();
 			attr.add(new LDAPAttribute("cn", username));
-			if (givenname != null) attr.add(new LDAPAttribute("givenName", givenname));
-			if (givenname != null) attr.add(new LDAPAttribute("sn", surname));
+			attr.add(new LDAPAttribute("givenName", givenname));
+			attr.add(new LDAPAttribute("sn", surname));
 			attr.add(new LDAPAttribute("objectClass", "inetOrgPerson"));
 			attr.add(new LDAPAttribute("objectClass", "organizationalPerson"));
 			attr.add(new LDAPAttribute("objectClass", "person"));
@@ -31,7 +35,7 @@ public class CapeManagerAgent extends Agent {
 					+ "_Users,dc=cape,dc=almende,dc=org", attr);
 			conn.add(entry);
 		} catch (LDAPException e) {
-			throw new Exception("Sorry, couldn't connect to LDAP server", e);
+			throw new Exception("Failed to add agent to LDAP", e);
 		}
 		return "";
 	}

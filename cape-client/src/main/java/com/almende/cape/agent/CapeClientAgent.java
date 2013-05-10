@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
+import com.almende.cape.agent.CapeDialogAgent;
 import com.almende.cape.handler.NotificationHandler;
 import com.almende.cape.handler.StateChangeHandler;
 import com.almende.eve.agent.annotation.Name;
@@ -88,7 +89,7 @@ public class CapeClientAgent extends CapeDialogAgent {
 					"user " + userId);
 		}
 		logger.info("Found agent providing this state, url=" + agentUrl + ". subscribing...");
-		String subscriptionId = subscribe(agentUrl, "change", "onStateChange");
+		String subscriptionId = eventsFactory.subscribe(agentUrl, "change", "onStateChange");
 
 		StateSubscription subscription = new StateSubscription();
 		subscription.subscriptionId = subscriptionId;
@@ -108,7 +109,7 @@ public class CapeClientAgent extends CapeDialogAgent {
 		for (String key : stateChangeHandlers.keySet()) {
 			StateSubscription subscription = stateChangeHandlers.get(key);
 			if (subscription.handler == handler) {
-				unsubscribe(subscription.agentUrl, subscription.subscriptionId);
+				eventsFactory.unsubscribe(subscription.agentUrl, subscription.subscriptionId);
 				stateChangeHandlers.remove(key);
 			}
 		}
@@ -121,7 +122,7 @@ public class CapeClientAgent extends CapeDialogAgent {
 	public void removeStateChangeHandlers() throws Exception {
 		for (String key : stateChangeHandlers.keySet()) {
 			StateSubscription subscription = stateChangeHandlers.get(key);
-			unsubscribe(subscription.agentUrl, subscription.subscriptionId);
+			eventsFactory.unsubscribe(subscription.agentUrl, subscription.subscriptionId);
 			stateChangeHandlers.remove(key);
 		}
 	}

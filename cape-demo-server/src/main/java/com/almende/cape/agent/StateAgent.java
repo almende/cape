@@ -2,11 +2,10 @@ package com.almende.cape.agent;
 
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.Map;
 
-import com.almende.eve.rpc.jsonrpc.JSONRequest;
 import com.almende.eve.agent.annotation.Name;
 import com.almende.eve.agent.annotation.Required;
+import com.almende.eve.rpc.jsonrpc.JSONRequest;
 import com.almende.eve.rpc.jsonrpc.jackson.JOM;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
@@ -39,7 +38,7 @@ public class StateAgent extends CapeStateAgent {
 			@Required(false) @Name("lng") Double lng, 
 			@Required(false) @Name("description") String description) throws Exception {
 		// store the new location
-		Map<String, Object> location = new HashMap<String, Object>();
+		HashMap<String, Object> location = new HashMap<String, Object>();
 		if (lat != null) {
 			location.put("lat", lat);
 		}
@@ -54,7 +53,7 @@ public class StateAgent extends CapeStateAgent {
 		// trigger a change event
 		ObjectNode params = JOM.createObjectNode();
 		params.put("location", JOM.getInstance().convertValue(location, ObjectNode.class));
-		trigger("change", params);
+		eventsFactory.trigger("change", params);
 	}
 	
 	/**

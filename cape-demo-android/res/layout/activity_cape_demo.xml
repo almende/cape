@@ -48,12 +48,14 @@
     <TextView
         android:id="@+id/location"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:textIsSelectable="true" />
 
     <TextView
         android:id="@+id/info"
         android:layout_width="match_parent"
         android:layout_height="0dip"
-        android:layout_weight="0.38" />
+        android:layout_weight="0.38"
+        android:textIsSelectable="true" />
 
 </LinearLayout>

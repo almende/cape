@@ -94,7 +94,7 @@ public class BuildingAgent extends CapeAgent {
 		
 		// add the user to the list with registered users
 		State context = getState();
-		List<Person> users = (List<Person>) context.get("users");
+		ArrayList<Person> users = (ArrayList<Person>) context.get("users");
 		if (users == null) {
 			users = new ArrayList<Person>();
 		}	
@@ -112,7 +112,7 @@ public class BuildingAgent extends CapeAgent {
 		
 		// add the user to the list with registered users
 		State context = getState();
-		List<Person> users = (List<Person>) context.get("users");
+		ArrayList<Person> users = (ArrayList<Person>) context.get("users");
 		if (users != null) {
 			int i = 0;
 			while (i < users.size()) {
@@ -200,7 +200,7 @@ public class BuildingAgent extends CapeAgent {
 		changeParams.put("agent", agent);
 		changeParams.put("event", event);
 		changeParams.put("params", params);
-		trigger("change", changeParams);
+		eventsFactory.trigger("change", changeParams);
 		
 		// TODO: remove extraction of userId after subscription mechanism is in use
 		int doubledot = agent.indexOf(":");
@@ -209,7 +209,7 @@ public class BuildingAgent extends CapeAgent {
 		
 		// find the user from the list, and update its location
 		State context = getState();
-		List<Person> users = (List<Person>) context.get("users");
+		ArrayList<Person> users = (ArrayList<Person>) context.get("users");
 		if (users != null) {
 			// calculate the number of present users
 			List<Person> presentUsers = filter(users, true);
@@ -244,7 +244,7 @@ public class BuildingAgent extends CapeAgent {
 			ObjectNode infoParams = JOM.createObjectNode();
 			infoParams.put("message", "Number of users left in the building: " +
 					"before=" + userCountBefore + ", after=" + userCountAfter);
-			trigger("info", infoParams);
+			eventsFactory.trigger("info", infoParams);
 			
 			// check whether the number of present users changed to 1
 			if (userCountBefore > 1 && userCountAfter == 1) {
@@ -304,7 +304,7 @@ public class BuildingAgent extends CapeAgent {
 			ObjectNode infoParams = JOM.createObjectNode();
 			infoParams.put("message", "Notifying userId=" + userId + 
 					" that he is the last in the building");
-			trigger("info", infoParams);
+			eventsFactory.trigger("info", infoParams);
 			
 			String message = 
 					"Hello " + userId + ". You are the last one in the building. " +

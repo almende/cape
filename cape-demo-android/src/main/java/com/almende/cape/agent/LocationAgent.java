@@ -1,7 +1,6 @@
 package com.almende.cape.agent;
 
 import java.util.HashMap;
-import java.util.Map;
 import java.util.logging.Logger;
 
 import android.app.Activity;
@@ -109,7 +108,7 @@ public class LocationAgent extends CapeStateAgent {
 			@Required(false) @Name("description") String description)
 			throws Exception {
 		// store the new location
-		Map<String, Object> location = new HashMap<String, Object>();
+		HashMap<String, Object> location = new HashMap<String, Object>();
 		if (lat != null) {
 			location.put("lat", lat);
 		}
@@ -125,7 +124,7 @@ public class LocationAgent extends CapeStateAgent {
 		ObjectNode params = JOM.createObjectNode();
 		params.put("location",
 				JOM.getInstance().convertValue(location, ObjectNode.class));
-		trigger("change", params);
+		eventsFactory.trigger("change", params);
 		
 		// just push the location to the BuildingAgent
 		// TODO: replace by using event subscription

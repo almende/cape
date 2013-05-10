@@ -7,13 +7,13 @@ services:
   service: openid.almende.org
 
 # context settings (for persistency)
-context:
+state:
   class: FileStateFactory
   path: .eveagents
 
 # scheduler settings (for tasks)
 scheduler:
-  class: RunnableScheduler
+  class: RunnableSchedulerFactory
 
 # create agents when running the first time
 bootstrap:
