@@ -6,7 +6,7 @@ CAPE stands for context-aware programming environment.
 ## What does it do?
 CAPE offers an interface both in the cloud and on mobile devices to contact or notify a user via any available media, access real-time status information of a user, and retrieve past and future planning of the user. The information sources can be for example calendar information, sensor information, and information on social media.
 
-![CAPE overview](https://github.com/NASTYJJ/exp/capescheme.jpg "Schematic overview of the CAPE framework")
+![CAPE overview](https://raw.github.com/NASTYJJ/exp/master/capescheme.jpg "Schematic overview of the CAPE framework")
 
 ## Is it good?
 The CAPE framework bridges the gap between cloud and mobile devices. Via a low-level messagebus it synchronizes the users state and available media channels between mobile and cloud representation of the user. 
