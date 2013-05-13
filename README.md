@@ -22,7 +22,7 @@ The CAPE API contains a number of layers:
 
 ## What are the alternatives?
 These frameworks are developed only recently as it targets newer types of mobile devices. Other such frameworks 
-(in different application areas) are ![AWARE](http://www.awareframework.com/home/) and ![COMPASS](http://link.springer.com/content/pdf/10.1007/978-3-540-27780-4_27.pdf) 
+(in different application areas) are [AWARE](http://www.awareframework.com/home/) and [COMPASS](http://link.springer.com/content/pdf/10.1007/978-3-540-27780-4_27.pdf) 
 
 ## An example
 Example code of a login and calls to several avaible methods:
