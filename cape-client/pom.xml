@@ -12,12 +12,12 @@
 	<name>CAPE Client</name>
 	<artifactId>cape-client</artifactId>
 
+	<!-- Needs to be added here instead of in the parent, to allow cape-demo-android to exclude this. (Needed for Smack) -->
 	<dependencies>
-		<dependency>
-			<groupId>com.almende.eve</groupId>
-			<artifactId>eve-core</artifactId>
-			<version>${eve.version}</version>
-		</dependency>
+	<dependency>
+		<groupId>com.almende.eve</groupId>
+		<artifactId>eve-core</artifactId>
+		<version>${eve.version}</version>
+	</dependency>
 	</dependencies>
-
 </project>

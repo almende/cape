@@ -10,14 +10,11 @@ public class LDAP  {
 
 	private static LDAPConnection conn = null;
 	
-	// The server is now running
-	// until we stop it:
-	
-	
 	public static LDAPConnection get() throws LDAPException{
 		if (conn == null){
 			conn = new LDAPConnection();
 			conn.connect(HOST,PORT);
+			//TODO: put password in a config item
 			conn.bind(LDAPConnection.LDAP_V3,"cn=admin,dc=cape,dc=almende,dc=org", "admin4almende".getBytes());
 		}
 		return conn;

@@ -19,6 +19,7 @@
 		<module>../cape-client</module>
 		<module>../cape-demo-android</module>
 		<module>../cape-demo-server</module>
+		<module>../cape-management</module>
 	</modules>
 
 	<properties>
@@ -32,6 +33,14 @@
 		<maven-surefire-plugin.version>2.12</maven-surefire-plugin.version>
 		<maven-source-plugin.version>2.1.2</maven-source-plugin.version>
 	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>com.almende.eve</groupId>
+			<artifactId>eve-core</artifactId>
+			<version>${eve.version}</version>
+		</dependency>
+	</dependencies>
 
 	<pluginRepositories>
 	</pluginRepositories>

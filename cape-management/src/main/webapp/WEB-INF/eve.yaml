@@ -1,0 +1,18 @@
+# Eve settings
+
+services:
+- class: XmppService
+  host: openid.almende.org
+  port: 5222
+  service: openid.almende.org
+
+# context settings (for persistency)
+state:
+  class: FileStateFactory
+  path: .mgmtagents
+
+# scheduler settings (for tasks)
+scheduler:
+  class: RunnableSchedulerFactory
+
+

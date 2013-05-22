@@ -36,6 +36,17 @@
 			<version>${eve.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>com.almende.eve</groupId>
+			<artifactId>eve-core</artifactId>
+			<version>${eve.version}</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>smackx</artifactId>
+					<groupId>jivesoftware</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
 			<groupId>com.almende.cape</groupId>
 			<artifactId>cape-client</artifactId>
 			<version>${project.parent.version}</version>

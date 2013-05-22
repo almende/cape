@@ -5,34 +5,28 @@
 		<groupId>com.almende.cape</groupId>
 		<artifactId>cape</artifactId>
 		<version>0.0.2-SNAPSHOT</version>
-		<relativePath>../cape/pom.xml</relativePath>
 	</parent>
-
-	<name>CAPE Demonstration Server</name>
-	<artifactId>cape-demo-server</artifactId>
+	<artifactId>manager</artifactId>
 	<packaging>war</packaging>
 
+	<name>CAPE Managemnt Agents</name>
+	<description>Management tooling for CAPE</description>
+
 	<properties>
-		<cape.server.finalName>cape</cape.server.finalName>
-		<neo4j.version>1.9.M01</neo4j.version>
+		<cape.server.finalName>cape_mgmt</cape.server.finalName>
 		<jetty.version>8.1.8.v20121106</jetty.version>
 	</properties>
 
 	<dependencies>
 		<dependency>
-			<groupId>com.almende.cape</groupId>
-			<artifactId>cape-client</artifactId>
-			<version>${project.parent.version}</version>
+			<groupId>org.openid4java</groupId>
+			<artifactId>openid4java</artifactId>
+			<version>0.9.7</version>
 		</dependency>
 		<dependency>
-			<groupId>org.neo4j.app</groupId>
-			<artifactId>neo4j-server</artifactId>
-			<version>${neo4j.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.google.collections</groupId>
-			<artifactId>google-collections</artifactId>
-			<version>1.0</version>
+			<groupId>com.novell.ldap</groupId>
+			<artifactId>jldap</artifactId>
+			<version>4.3</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mortbay.jetty</groupId>
