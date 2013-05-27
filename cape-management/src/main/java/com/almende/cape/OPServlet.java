@@ -2,7 +2,9 @@ package com.almende.cape;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -28,6 +30,9 @@ import org.openid4java.message.ParameterList;
 import org.openid4java.message.ax.AxMessage;
 import org.openid4java.message.ax.FetchRequest;
 import org.openid4java.message.ax.FetchResponse;
+import org.openid4java.message.sreg.SRegMessage;
+import org.openid4java.message.sreg.SRegRequest;
+import org.openid4java.message.sreg.SRegResponse;
 import org.openid4java.server.ServerException;
 import org.openid4java.server.ServerManager;
 
@@ -120,7 +125,13 @@ public class OPServlet extends HttpServlet implements Servlet {
 				isAuthenticated = false;
 			}
 			
-			String userSelectedId = paramsMap.get("openid.identity")[0];
+			String userSelectedId = "";
+			if (paramsMap.containsKey("openid.identity")){
+				 userSelectedId = paramsMap.get("openid.identity")[0];
+			} else {
+				directResponse(resp, "openid.identity is missing!");
+				return;
+			}
 			
 			String authorization = req.getHeader("Authorization");
 			String[] values = null;
@@ -193,68 +204,117 @@ public class OPServlet extends HttpServlet implements Servlet {
 				} else {
 					isAuthenticated = true;
 					if (entry != null) {
+						MessageExtension axExt = null;
+						MessageExtension SRegExt = null;
 						if (authReq.hasExtension(AxMessage.OPENID_NS_AX)) {
-							MessageExtension ext = authReq
+							axExt = authReq
 									.getExtension(AxMessage.OPENID_NS_AX);
-							if (ext instanceof FetchRequest) {
-								FetchRequest fetchReq = (FetchRequest) ext;
-								Map<String, String> required = fetchReq
-										.getAttributes(true);
-								Map<String, String> optional = fetchReq
-										.getAttributes(false);
-								Map<String, String> userDataExt = new HashMap<String, String>();
-								
-								//TODO: provide mapping between AX urls and our LDAP elements
-								
-								for (Entry<String, String> item : required.entrySet()) {
-									System.err.println("Adding required AX:"
-											+ item.getValue());
-									if (item.getValue().equals("http://axschema.org/contact/email")) {
-										userDataExt.put(item.getKey(), entry
-												.getAttribute("cn")
-												.getStringValue()
-												+ "@" + domain);
+						}
+						if (authReq.hasExtension(SRegMessage.OPENID_NS_SREG)) {
+							SRegExt = authReq
+									.getExtension(SRegMessage.OPENID_NS_SREG);
+						}
+						Map<String, String> required = new HashMap<String, String>();
+						Map<String, String> optional = new HashMap<String, String>();
+						FetchRequest fetchReq = null;
+						List<String> SRegRequired = new ArrayList<String>();
+						List<String> SRegOptional = new ArrayList<String>();
+						SRegRequest sregReq = null;
+						
+						if (axExt instanceof FetchRequest) {
+							fetchReq = (FetchRequest) axExt;
+							required = fetchReq.getAttributes(true);
+							optional = fetchReq.getAttributes(false);
+						}
+						if (SRegExt instanceof SRegRequest) {
+							sregReq = (SRegRequest) SRegExt;
+							SRegRequired = sregReq.getAttributes(true);
+							SRegOptional = sregReq.getAttributes(false);
+							System.err.println("SREG request found:" + sregReq);
+						}
+						Map<String, String> userDataExt = new HashMap<String, String>();
+						
+						// TODO: provide mapping between AX urls and our
+						// LDAP elements
+						
+						Map<String,String> map = new HashMap<String,String>();
+						map.put("http://axschema.org/contact/email", "cn|@"+domain);
+						map.put("http://axschema.org/namePerson/friendly", "givenName");
+						map.put("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname", "givenName");
+						map.put("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname", "sn");
+						map.put("http://axschema.org/namePerson", "givenName| |sn");
+						
+						for (Entry<String, String> item : required.entrySet()) {
+							if (map.containsKey(item.getValue())){
+								String[] lookupKey = map.get(item.getValue()).split("\\|");
+								String res = "";
+								for (String elem : lookupKey){
+									if (entry.getAttribute(elem) != null){
+										res += entry.getAttribute(elem).getStringValue();
 									} else {
-										if (entry.getAttribute(item.getValue()) == null){
-											directResponse(resp, DirectError.createDirectError("Couldn't produce requested AX type:"+item.getValue()).keyValueFormEncoding());
-											return;
-										}
-										userDataExt.put(item.getKey(), entry
-												.getAttribute(item.getValue())
-												.getStringValue());
+										res += elem;
 									}
 								}
-								for (Entry<String, String> item : optional.entrySet()) {
-									System.err.println("Adding optional AX:"
-											+ item.getValue());
-									if (item.getValue().equals("http://axschema.org/contact/email")) {
-										userDataExt.put(item.getKey(), entry
-												.getAttribute("cn")
-												.getStringValue()
-												+ "@" + domain);
-									} else {
-										if (entry.getAttribute(item.getValue()) != null){
-											userDataExt.put(item.getKey(), entry
-													.getAttribute(item.getValue())
-													.getStringValue());
-										}
-									}
-								}
-								
-								FetchResponse fetchResp = FetchResponse
-										.createFetchResponse(fetchReq,
-												userDataExt);
-								response.addExtension(fetchResp);
-							} else // if (ext instanceof StoreRequest)
-							{
-								throw new UnsupportedOperationException("TODO");
+								System.err.println("Adding required AX:"
+										+ item.getValue()+ " -> "+res);
+								userDataExt.put(item.getKey(), res);
+							} else {
+								//TODO: throw error, missing required element!
 							}
 							
 						}
+						for (Entry<String, String> item : optional.entrySet()) {
+							if (map.containsKey(item.getValue())){
+								String[] lookupKey = map.get(item.getValue()).split("\\|");
+								String res = "";
+								for (String elem : lookupKey){
+									if (entry.getAttribute(elem) != null){
+										res += entry.getAttribute(elem).getStringValue();
+									} else {
+										res += elem;
+									}
+								}
+								System.err.println("Adding optional AX:"
+									+ item.getValue()+ " -> "+res);
+								userDataExt.put(item.getKey(), res);
+							}
+						}
+						for (String elem : SRegRequired) {
+							System.err.println("SREG required:" + elem);
+							if (entry.getAttribute(elem) != null){
+								String res = entry.getAttribute(elem).getStringValue();
+								System.err.println("Adding required SREG:"
+									+ elem+ " -> "+res);
+								userDataExt.put(elem, res);
+							} else {
+								//TODO:throw error, missing required SREG element
+							}
+						}
+						for (String elem : SRegOptional) {
+							System.err.println("SREG optional:" + elem);
+							if (entry.getAttribute(elem) != null){
+								String res = entry.getAttribute(elem).getStringValue();
+								System.err.println("Adding optional SREG:"
+									+ elem+ " -> "+res);
+								userDataExt.put(elem, res);
+							}
+						}
+						if (fetchReq != null) {
+							FetchResponse fetchResp = FetchResponse
+									.createFetchResponse(fetchReq, userDataExt);
+							response.addExtension(fetchResp);
+						}
+						if (sregReq != null) {
+							SRegResponse sregResp = SRegResponse
+									.createSRegResponse(sregReq, userDataExt);
+							response.addExtension(sregResp);
+						}
+						
 					}
+					System.err
+							.println("Came quite far:" + userSelectedId + " - "
+									+ userSelectedClaimedId + " - " + values[0]);
 				}
-				System.err.println("Came quite far:" + userSelectedId + " - "
-						+ userSelectedClaimedId + " - " + values[0]);
 			} catch (MessageException e1) {
 				throw new ServletException(e1);
 			}
