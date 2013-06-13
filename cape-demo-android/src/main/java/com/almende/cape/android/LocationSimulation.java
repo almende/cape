@@ -4,20 +4,20 @@ import android.os.Handler;
 import android.os.Looper;
 
 import com.almende.cape.agent.LocationAgent;
-import com.almende.eve.agent.AgentFactory;
+import com.almende.eve.agent.AgentHost;
 
 public class LocationSimulation {
 	private static String AGENT_ID = "location";
 	private Handler mHandler = new Handler(Looper.getMainLooper());
 	
 	
-	private AgentFactory factory = null;
+	private AgentHost factory = null;
 	private LocationAgent agent = null;
 
 	public void start(String username, String password) {
 		try {
 			if (factory == null) {
-				factory = AgentFactory.getInstance();
+				factory = AgentHost.getInstance();
 				if (factory == null) {
 					throw new Exception("CAPE is not yet instantiated");
 				}

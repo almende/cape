@@ -7,8 +7,8 @@ import java.util.Map;
 
 import com.almende.cape.entity.timeline.Slot;
 import com.almende.eve.rpc.jsonrpc.JSONRequest;
-import com.almende.eve.agent.annotation.Name;
-import com.almende.eve.agent.annotation.Required;
+import com.almende.eve.rpc.annotation.Name;
+import com.almende.eve.rpc.annotation.Required;
 import com.almende.eve.rpc.jsonrpc.jackson.JOM;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
@@ -41,7 +41,7 @@ public class StateAgent extends CapeStateAgent {
 		// trigger a change event
 		ObjectNode params = JOM.createObjectNode();
 		params.put("location", JOM.getInstance().convertValue(location, ObjectNode.class));
-		trigger("change", params);
+		getEventsFactory().trigger("change", params);
 	}
 	
 	/**

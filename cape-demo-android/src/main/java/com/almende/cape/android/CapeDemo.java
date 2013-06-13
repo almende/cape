@@ -17,7 +17,7 @@ import android.widget.TextView;
 import com.almende.cape.CapeClient;
 import com.almende.cape.entity.Message;
 import com.almende.cape.handler.MessageHandler;
-import com.almende.eve.agent.AgentFactory;
+import com.almende.eve.agent.AgentHost;
 import com.almende.eve.scheduler.RunnableSchedulerFactory;
 import com.almende.eve.state.AndroidStateFactory;
 
@@ -45,11 +45,11 @@ public class CapeDemo extends Activity {
         
         ctx = this;
         try {
-        	AgentFactory af = AgentFactory.createInstance();
+        	AgentHost af = AgentHost.getInstance();
         	Map<String, Object> params = new HashMap<String,Object>();
         	params.put("AppContext", ctx);
         
-        	af.setStateFactory(new AndroidStateFactory(af, params));
+        	af.setStateFactory(new AndroidStateFactory(params));
         	af.setSchedulerFactory(new RunnableSchedulerFactory(af, ".runnablescheduler"));
 		
         	cape = new CapeClient(af);

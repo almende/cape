@@ -1,6 +1,6 @@
 package com.almende.cape.agent;
 
-import com.almende.eve.agent.annotation.Name;
+import com.almende.eve.rpc.annotation.Name;
 
 public abstract class CapeDialogAgent extends CapeAgent {
 	private static String DATA_TYPE = "dialog";

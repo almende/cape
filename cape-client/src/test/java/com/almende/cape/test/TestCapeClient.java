@@ -29,13 +29,6 @@ public class TestCapeClient {
 					System.out.println("Notification: " + message.getMessage());
 				}
 			});
-
-			cape.onStateChange("location", new StateChangeHandler() {
-				@Override
-				public void onChange(Object state) {
-					System.out.println("State changed: " + state);
-				}
-			});
 			
 			System.out.println("Press ENTER to quit");
 			Scanner scanner = new Scanner(System.in);

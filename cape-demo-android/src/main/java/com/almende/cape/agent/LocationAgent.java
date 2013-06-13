@@ -1,5 +1,6 @@
 package com.almende.cape.agent;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -15,8 +16,8 @@ import android.widget.TextView;
 
 import com.almende.cape.android.R;
 import com.almende.cape.entity.timeline.Slot;
-import com.almende.eve.agent.annotation.Name;
-import com.almende.eve.agent.annotation.Required;
+import com.almende.eve.rpc.annotation.Name;
+import com.almende.eve.rpc.annotation.Required;
 import com.almende.eve.rpc.jsonrpc.JSONRequest;
 import com.almende.eve.rpc.jsonrpc.jackson.JOM;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -102,13 +103,13 @@ public class LocationAgent extends CapeStateAgent {
 		if (description != null) {
 			location.put("description", description);
 		}
-		getState().put("location", location);
+		//getState().put("location", location);
 
 		// trigger a change event
 		ObjectNode params = JOM.createObjectNode();
 		params.put("location",
 				JOM.getInstance().convertValue(location, ObjectNode.class));
-		trigger("change", params);
+		getEventsFactory().trigger("change", params);
 		
 		// just push the location to the BuildingAgent
 		// TODO: replace by using event subscription
@@ -117,7 +118,7 @@ public class LocationAgent extends CapeStateAgent {
 		changeParams.put("agent", getXmppUrl());
 		changeParams.put("event", "change");
 		changeParams.put("params", params);
-		send(BUILDING_URL, "onChange", changeParams);
+		send(URI.create(BUILDING_URL), "onChange", changeParams);
 		
 		Activity act = (Activity) getState().get("AppContext");
 		if (act != null) {

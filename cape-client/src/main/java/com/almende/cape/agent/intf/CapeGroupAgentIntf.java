@@ -3,7 +3,7 @@ package com.almende.cape.agent.intf;
 import java.util.Set;
 
 import com.almende.eve.agent.AgentInterface;
-import com.almende.eve.agent.annotation.Name;
+import com.almende.eve.rpc.annotation.Name;
 import com.almende.cape.entity.Group;
 
 public interface CapeGroupAgentIntf extends AgentInterface {

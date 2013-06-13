@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.almende.cape.entity.timeline.Slot;
 import com.almende.eve.agent.AgentInterface;
-import com.almende.eve.agent.annotation.Name;
+import com.almende.eve.rpc.annotation.Name;
 
 public interface CapeStateAgentIntf extends AgentInterface {
 

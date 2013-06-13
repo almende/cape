@@ -1,5 +1,6 @@
 package com.almende.cape.agent;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -7,11 +8,11 @@ import java.util.logging.Logger;
 
 import com.almende.cape.entity.DataSource;
 import com.almende.eve.agent.Agent;
-import com.almende.eve.agent.AgentFactory;
-import com.almende.eve.agent.annotation.Access;
-import com.almende.eve.agent.annotation.AccessType;
-import com.almende.eve.agent.annotation.Name;
-import com.almende.eve.agent.annotation.Required;
+import com.almende.eve.agent.AgentHost;
+import com.almende.eve.rpc.annotation.Access;
+import com.almende.eve.rpc.annotation.AccessType;
+import com.almende.eve.rpc.annotation.Name;
+import com.almende.eve.rpc.annotation.Required;
 import com.almende.eve.rpc.jsonrpc.jackson.JOM;
 import com.almende.eve.state.State;
 import com.almende.eve.transport.xmpp.XmppService;
@@ -128,7 +129,7 @@ public abstract class CapeAgent extends Agent {
 	 * @throws Exception
 	 */
 	public void connect() throws Exception {
-		AgentFactory factory = getAgentFactory();
+		AgentHost factory = getAgentFactory();
 		XmppService service = (XmppService) factory.getTransportService("xmpp");
 		if (service != null) {
 			State context = getState();
@@ -158,7 +159,7 @@ public abstract class CapeAgent extends Agent {
 	 * @throws Exception
 	 */
 	public void disconnect() throws Exception {
-		AgentFactory factory = getAgentFactory();
+		AgentHost factory = getAgentFactory();
 		XmppService service = (XmppService) factory.getTransportService("xmpp");
 		if (service != null) {
 			service.disconnect(getId());
@@ -193,7 +194,7 @@ public abstract class CapeAgent extends Agent {
 		dataSource.put("direction", direction);
 		params.put("dataSource", dataSource);
 		// TODO: replace ObjectNode with DataSource
-		send(MERLIN_URL, method, params);		
+		send(URI.create(MERLIN_URL), method, params);		
 	}
 
 	protected String getUsername() {
@@ -221,7 +222,7 @@ public abstract class CapeAgent extends Agent {
 			dataSource.put("dataType", dataType);
 			params.put("dataSource", dataSource);
 			// TODO: replace ObjectNode with DataSource			
-			send(MERLIN_URL, method, params);
+			send(URI.create(MERLIN_URL), method, params);
 		}
 	}
 
@@ -243,7 +244,7 @@ public abstract class CapeAgent extends Agent {
 				userId + " and dataType=" + dataType);
 
 		List<DataSource> agentSources = new ArrayList<DataSource>();
-		ArrayNode dataSources = send(MERLIN_URL, method, params, ArrayNode.class);
+		ArrayNode dataSources = send(URI.create(MERLIN_URL), method, params, ArrayNode.class);
 		Iterator<JsonNode> it = dataSources.elements(); 
 		while(it.hasNext()) {
 			agentSources.add(JOM.getInstance().convertValue(it.next(), DataSource.class));
@@ -276,7 +277,7 @@ public abstract class CapeAgent extends Agent {
 		String method = "onNotification";
 		ObjectNode params = JOM.createObjectNode();
 		params.put("message", message);
-		send(notificationAgentUrl, method, params);
+		send(URI.create(notificationAgentUrl), method, params);
 	}
 	
 	/**
@@ -302,7 +303,7 @@ public abstract class CapeAgent extends Agent {
 		ObjectNode params = JOM.createObjectNode();
 		String filterStr = (filter != null) ? JOM.getInstance().writeValueAsString(filter) : "";
 		params.put("filter", filterStr);
-		String contacts = send(contactAgentUrl, method, params, String.class);
+		String contacts = send(URI.create(contactAgentUrl), method, params, String.class);
 		ArrayNode array = JOM.getInstance().readValue(contacts, ArrayNode.class);
 		
 		return array;

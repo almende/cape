@@ -1,9 +1,12 @@
 package com.almende.cape;
 
+import java.util.Set;
+
 import com.almende.cape.agent.CapeClientAgent;
+import com.almende.cape.entity.Group;
 import com.almende.cape.handler.MessageHandler;
 import com.almende.cape.handler.StateChangeHandler;
-import com.almende.eve.agent.AgentFactory;
+import com.almende.eve.agent.AgentHost;
 import com.almende.eve.scheduler.RunnableSchedulerFactory;
 import com.almende.eve.state.MemoryStateFactory;
 import com.almende.eve.transport.xmpp.XmppService;
@@ -15,19 +18,19 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
  */
 public class CapeClient {
 	private CapeClientAgent agent = null;
-	private AgentFactory factory = null;
+	private AgentHost factory = null;
 	
 	/**
 	 * Constructor
 	 * @throws Exception
 	 */
 	public CapeClient() {
-		this(AgentFactory.getInstance());
+		this(AgentHost.getInstance());
 	}
-	public CapeClient(AgentFactory factory){
+	public CapeClient(AgentHost factory){
 		if (factory == null) {
 			try {
-				factory = AgentFactory.createInstance();
+				factory = AgentHost.getInstance();
 				factory.setStateFactory(new MemoryStateFactory());
 				factory.setSchedulerFactory(new RunnableSchedulerFactory(factory, ".runnablescheduler"));
 			} catch (Exception e) {
@@ -79,12 +82,10 @@ public class CapeClient {
 		if (agent != null) {
 			// remove any handlers
 			agent.removeMessageHandler();
-			agent.removeStateChangeHandlers();
 			
 			// disconnect from xmpp service
 			agent.disconnect();
 
-			agent.destroy();
 			agent = null;
 		}
 	}
@@ -94,29 +95,6 @@ public class CapeClient {
 			throw new Exception("Not logged in");
 		}
 		agent.setMessageHandler(messageHandler);
-	}
-	/**
-	 * Set a handler to be triggered when a users state changes
-	 * @param notificationHandler
-	 * @throws Exception 
-	 */
-	public void onStateChange(String state, StateChangeHandler handler) 
-			throws Exception {
-		String userId = null;
-		onStateChange(userId, state, handler);
-	}
-	
-	/**
-	 * Set a handler to be triggered when a users state changes
-	 * @param notificationHandlerd
-	 * @throws Exception 
-	 */
-	public void onStateChange(String userId, String state, 
-			StateChangeHandler handler) throws Exception {
-		if (agent == null) {
-			throw new Exception("Not logged in");
-		}
-		agent.addStateChangeHandler(userId, state, handler);
 	}
 	
 	/**
@@ -130,6 +108,14 @@ public class CapeClient {
 			throw new Exception("Not logged in");
 		}
 		return agent.getContacts(filter);
+	}
+	
+	public Set<Group> getGroups() throws Exception {
+		if (agent == null) {
+			throw new Exception("Not logged in");
+		}
+		System.out.println("AgentId: "+agent.getId());
+		return agent.getGroups();
 	}
 	
 	@Override

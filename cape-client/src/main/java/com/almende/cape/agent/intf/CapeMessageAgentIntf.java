@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.Set;
 
 import com.almende.eve.agent.AgentInterface;
-import com.almende.eve.agent.annotation.Name;
-import com.almende.eve.agent.annotation.Required;
+import com.almende.eve.rpc.annotation.Name;
+import com.almende.eve.rpc.annotation.Required;
 import com.almende.cape.entity.Message;
 
 public interface CapeMessageAgentIntf extends AgentInterface {
