@@ -7,8 +7,8 @@ import java.util.Map;
 
 import com.almende.cape.entity.Location;
 import com.almende.cape.entity.Person;
-import com.almende.eve.agent.annotation.Name;
-import com.almende.eve.agent.annotation.Required;
+import com.almende.eve.rpc.annotation.Name;
+import com.almende.eve.rpc.annotation.Required;
 import com.almende.eve.rpc.jsonrpc.JSONRequest;
 import com.almende.eve.rpc.jsonrpc.jackson.JOM;
 import com.almende.eve.state.State;
@@ -200,7 +200,7 @@ public class BuildingAgent extends CapeAgent {
 		changeParams.put("agent", agent);
 		changeParams.put("event", event);
 		changeParams.put("params", params);
-		eventsFactory.trigger("change", changeParams);
+		getEventsFactory().trigger("change", changeParams);
 		
 		// TODO: remove extraction of userId after subscription mechanism is in use
 		int doubledot = agent.indexOf(":");
@@ -244,7 +244,7 @@ public class BuildingAgent extends CapeAgent {
 			ObjectNode infoParams = JOM.createObjectNode();
 			infoParams.put("message", "Number of users left in the building: " +
 					"before=" + userCountBefore + ", after=" + userCountAfter);
-			eventsFactory.trigger("info", infoParams);
+			getEventsFactory().trigger("info", infoParams);
 			
 			// check whether the number of present users changed to 1
 			if (userCountBefore > 1 && userCountAfter == 1) {
@@ -304,7 +304,7 @@ public class BuildingAgent extends CapeAgent {
 			ObjectNode infoParams = JOM.createObjectNode();
 			infoParams.put("message", "Notifying userId=" + userId + 
 					" that he is the last in the building");
-			eventsFactory.trigger("info", infoParams);
+			getEventsFactory().trigger("info", infoParams);
 			
 			String message = 
 					"Hello " + userId + ". You are the last one in the building. " +

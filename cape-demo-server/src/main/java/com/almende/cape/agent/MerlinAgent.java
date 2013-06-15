@@ -10,9 +10,9 @@ import org.neo4j.graphdb.index.Index;
 
 import com.almende.cape.DB;
 import com.almende.cape.entity.DataSource;
-import com.almende.eve.agent.annotation.Name;
-import com.almende.eve.agent.annotation.Required;
 import com.almende.eve.config.Config;
+import com.almende.eve.rpc.annotation.Name;
+import com.almende.eve.rpc.annotation.Required;
 
 public class MerlinAgent extends CapeAgent {
 	// TODO: move the storage of the data to a flat table database,

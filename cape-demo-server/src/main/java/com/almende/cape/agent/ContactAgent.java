@@ -20,8 +20,8 @@ import org.neo4j.kernel.Traversal;
 import org.neo4j.kernel.Uniqueness;
 
 import com.almende.cape.DB;
-import com.almende.eve.agent.AgentFactory;
-import com.almende.eve.agent.annotation.Name;
+import com.almende.eve.agent.AgentHost;
+import com.almende.eve.rpc.annotation.Name;
 import com.almende.eve.transport.xmpp.XmppService;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -126,7 +126,7 @@ public class ContactAgent extends CapeContactAgent {
 	
 	public void xmppConnect(@Name("username") String username,
 	        @Name("password") String password) throws Exception {
-	    AgentFactory factory = getAgentFactory();
+	    AgentHost factory = getAgentFactory();
 
 	    XmppService service = (XmppService) factory.getTransportService("xmpp");
 	    if (service != null) {
@@ -138,7 +138,7 @@ public class ContactAgent extends CapeContactAgent {
 	}
 
 	public void xmppDisconnect() throws Exception {
-	    AgentFactory factory = getAgentFactory();
+	    AgentHost factory = getAgentFactory();
 	    XmppService service = (XmppService) factory.getTransportService("xmpp");
 	    if (service != null) {
 	        service.disconnect(getId());
@@ -154,7 +154,7 @@ public class ContactAgent extends CapeContactAgent {
 		f.setCodec(om);
 		JsonGenerator g;
 		try {
-			g = f.createJsonGenerator(resultWriter);
+			g = f.createGenerator(resultWriter);
 			
 			
 			final Node target = DB.getIndex().get("id","agents").getSingle();
@@ -229,7 +229,7 @@ public class ContactAgent extends CapeContactAgent {
 		f.setCodec(om);
 		JsonGenerator g;
 		try {
-			g = f.createJsonGenerator(resultWriter);
+			g = f.createGenerator(resultWriter);
 			
 			final Node target = DB.getIndex().get("id","agents").getSingle();
 			TraversalDescription td = Traversal.description()

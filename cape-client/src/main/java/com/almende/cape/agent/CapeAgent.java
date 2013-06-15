@@ -1,13 +1,14 @@
 package com.almende.cape.agent;
 
+import java.net.URI;
 import java.util.logging.Logger;
 
 import com.almende.eve.agent.Agent;
-import com.almende.eve.agent.AgentFactory;
-import com.almende.eve.agent.annotation.Access;
-import com.almende.eve.agent.annotation.AccessType;
-import com.almende.eve.agent.annotation.Name;
-import com.almende.eve.agent.annotation.Required;
+import com.almende.eve.agent.AgentHost;
+import com.almende.eve.rpc.annotation.Access;
+import com.almende.eve.rpc.annotation.AccessType;
+import com.almende.eve.rpc.annotation.Name;
+import com.almende.eve.rpc.annotation.Required;
 import com.almende.eve.rpc.jsonrpc.jackson.JOM;
 import com.almende.eve.state.State;
 import com.almende.eve.transport.xmpp.XmppService;
@@ -20,7 +21,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
  */
 public abstract class CapeAgent extends Agent {
 	// TODO: do not hard-code the merlin agent url.
-	protected static String MERLIN_URL = "xmpp:merlin@openid.almende.org";
+	protected static URI MERLIN_URL = URI.create("xmpp:merlin@openid.almende.org");
 
 	/**
 	 * Set xmpp account for the agent. Only applicable when no account has been
@@ -129,7 +130,7 @@ public abstract class CapeAgent extends Agent {
 	 * @throws Exception
 	 */
 	public void connect() throws Exception {
-		AgentFactory factory = getAgentFactory();
+		AgentHost factory = getAgentFactory();
 		XmppService service = (XmppService) factory.getTransportService("xmpp");
 		if (service != null) {
 			State context = getState();
@@ -165,7 +166,7 @@ public abstract class CapeAgent extends Agent {
 	 * @throws Exception
 	 */
 	public void disconnect() throws Exception {
-		AgentFactory factory = getAgentFactory();
+		AgentHost factory = getAgentFactory();
 		XmppService service = (XmppService) factory.getTransportService("xmpp");
 		if (service != null) {
 			service.disconnect(getId());
@@ -234,7 +235,7 @@ public abstract class CapeAgent extends Agent {
 	 * @throws Exception
 	 */
 	@Access(AccessType.UNAVAILABLE)
-	public String findDataSource(String userId, String dataType)
+	public URI findDataSource(String userId, String dataType)
 			throws Exception {
 		String method = "find";
 		ObjectNode params = JOM.createObjectNode();
@@ -244,15 +245,14 @@ public abstract class CapeAgent extends Agent {
 		logger.info("Requesting the MerlinAgent for a dataSource with userId="
 				+ userId + " and dataType=" + dataType);
 
-		ArrayNode contactSources = send(MERLIN_URL, method, params,
-				ArrayNode.class);
+		ArrayNode contactSources = send(MERLIN_URL, method, params,JOM.getSimpleType(ArrayNode.class));
 		if (contactSources.size() > 0) {
 			ObjectNode contactSource = (ObjectNode) contactSources.get(0);
 
 			logger.info("Retrieved dataSource from MerlinAgent: "
 					+ contactSource);
 
-			return contactSource.get("agentUrl").asText();
+			return URI.create(contactSource.get("agentUrl").asText());
 		}
 		return null;
 	}
@@ -274,7 +274,7 @@ public abstract class CapeAgent extends Agent {
 		String dataType = "dialog";
 
 		// find an agent which can handle a dialog with the user
-		String notificationAgentUrl = findDataSource(userId, dataType);
+		URI notificationAgentUrl = findDataSource(userId, dataType);
 		if (notificationAgentUrl == null) {
 			throw new Exception(
 					"No data source found supporting a dialog with user "
@@ -301,7 +301,7 @@ public abstract class CapeAgent extends Agent {
 	public ArrayNode getContacts(ObjectNode filter) throws Exception {
 		String userId = getId();
 		String dataType = "contacts";
-		String contactAgentUrl = findDataSource(userId, dataType);
+		URI contactAgentUrl = findDataSource(userId, dataType);
 		if (contactAgentUrl == null) {
 			throw new Exception(
 					"No data source found containing contacts of user "
@@ -314,7 +314,7 @@ public abstract class CapeAgent extends Agent {
 		String filterStr = (filter != null) ? JOM.getInstance()
 				.writeValueAsString(filter) : "";
 		params.put("filter", filterStr);
-		String contacts = send(contactAgentUrl, method, params, String.class);
+		String contacts = send(contactAgentUrl, method, params,JOM.getSimpleType(String.class));
 		ArrayNode array = JOM.getInstance()
 				.readValue(contacts, ArrayNode.class);
 

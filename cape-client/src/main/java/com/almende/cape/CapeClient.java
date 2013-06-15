@@ -3,7 +3,8 @@ package com.almende.cape;
 import com.almende.cape.agent.CapeClientAgent;
 import com.almende.cape.handler.NotificationHandler;
 import com.almende.cape.handler.StateChangeHandler;
-import com.almende.eve.agent.AgentFactory;
+import com.almende.eve.agent.AgentHost;
+import com.almende.eve.agent.AgentSignal;
 import com.almende.eve.scheduler.RunnableSchedulerFactory;
 import com.almende.eve.state.MemoryStateFactory;
 import com.almende.eve.transport.xmpp.XmppService;
@@ -15,26 +16,23 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
  */
 public class CapeClient {
 	private CapeClientAgent agent = null;
-	private AgentFactory factory = null;
+	private AgentHost factory = null;
 	
 	/**
 	 * Constructor
 	 * @throws Exception
 	 */
 	public CapeClient() {
-		this(AgentFactory.getInstance());
+		this(AgentHost.getInstance());
 	}
-	public CapeClient(AgentFactory factory){
+	public CapeClient(AgentHost factory){
 		if (factory == null) {
-			try {
-				factory = AgentFactory.createInstance();
-				factory.setStateFactory(new MemoryStateFactory());
-				factory.setSchedulerFactory(new RunnableSchedulerFactory(factory, ".runnablescheduler"));
-			} catch (Exception e) {
-				e.printStackTrace();
-				System.err.println("Failed to init factory!");
-			}
+			factory = AgentHost.getInstance();
 		}
+		
+		factory.setStateFactory(new MemoryStateFactory());
+		factory.setSchedulerFactory(new RunnableSchedulerFactory(factory, ".runnablescheduler"));
+
 		String host = "openid.almende.org";
 		Integer port = 5222;
 		String service = host;
@@ -82,7 +80,7 @@ public class CapeClient {
 			// disconnect from xmpp service
 			agent.disconnect();
 
-			agent.destroy();
+			agent.signalAgent(new AgentSignal<Void>("destroy",null));
 			agent = null;
 		}
 	}

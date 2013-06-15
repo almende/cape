@@ -2,7 +2,7 @@ package com.almende.cape.agent;
 
 import com.almende.cape.LDAP;
 import com.almende.eve.agent.Agent;
-import com.almende.eve.agent.annotation.Name;
+import com.almende.eve.rpc.annotation.Name;
 import com.novell.ldap.LDAPAttribute;
 import com.novell.ldap.LDAPAttributeSet;
 import com.novell.ldap.LDAPConnection;

@@ -1,14 +1,14 @@
 package com.almende.cape.agent;
 
+import java.net.URI;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
-import com.almende.cape.agent.CapeDialogAgent;
 import com.almende.cape.handler.NotificationHandler;
 import com.almende.cape.handler.StateChangeHandler;
-import com.almende.eve.agent.annotation.Name;
-import com.almende.eve.agent.annotation.Required;
+import com.almende.eve.rpc.annotation.Name;
+import com.almende.eve.rpc.annotation.Required;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class CapeClientAgent extends CapeDialogAgent {
@@ -83,18 +83,18 @@ public class CapeClientAgent extends CapeDialogAgent {
 
 		// TODO: should run a process which regularly refreshes the url for the datasource
 		logger.info("Registering state handler for userId=" + userId + ", state=" + state);
-		String agentUrl = findDataSource(userId, "state");
+		URI agentUrl = findDataSource(userId, "state");
 		if (agentUrl == null) {
 			throw new Exception("No agent found providing state information for " +
 					"user " + userId);
 		}
 		logger.info("Found agent providing this state, url=" + agentUrl + ". subscribing...");
-		String subscriptionId = eventsFactory.subscribe(agentUrl, "change", "onStateChange");
+		String subscriptionId = getEventsFactory().subscribe(agentUrl, "change", "onStateChange");
 
 		StateSubscription subscription = new StateSubscription();
 		subscription.subscriptionId = subscriptionId;
 		subscription.handler = handler;
-		subscription.agentUrl = agentUrl;
+		subscription.agentUrl = agentUrl.toASCIIString();
 		stateChangeHandlers.put(key, subscription);
 
 		logger.info("Registered state handler");
@@ -109,7 +109,7 @@ public class CapeClientAgent extends CapeDialogAgent {
 		for (String key : stateChangeHandlers.keySet()) {
 			StateSubscription subscription = stateChangeHandlers.get(key);
 			if (subscription.handler == handler) {
-				eventsFactory.unsubscribe(subscription.agentUrl, subscription.subscriptionId);
+				getEventsFactory().unsubscribe(URI.create(subscription.agentUrl), subscription.subscriptionId);
 				stateChangeHandlers.remove(key);
 			}
 		}
@@ -122,7 +122,7 @@ public class CapeClientAgent extends CapeDialogAgent {
 	public void removeStateChangeHandlers() throws Exception {
 		for (String key : stateChangeHandlers.keySet()) {
 			StateSubscription subscription = stateChangeHandlers.get(key);
-			eventsFactory.unsubscribe(subscription.agentUrl, subscription.subscriptionId);
+			getEventsFactory().unsubscribe(URI.create(subscription.agentUrl), subscription.subscriptionId);
 			stateChangeHandlers.remove(key);
 		}
 	}

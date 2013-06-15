@@ -102,6 +102,7 @@
 						<platform>${android.target}</platform>
 					</sdk>
 					<undeployBeforeDeploy>true</undeployBeforeDeploy>
+					<extractDuplicates>true</extractDuplicates>
 				</configuration>
 				<extensions>true</extensions>
 			</plugin>

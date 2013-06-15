@@ -1,5 +1,6 @@
 package com.almende.cape.agent;
 
+import java.net.URI;
 import java.util.HashMap;
 import java.util.logging.Logger;
 
@@ -12,15 +13,15 @@ import android.os.Bundle;
 import android.widget.TextView;
 
 import com.almende.cape.android.R;
-import com.almende.eve.agent.annotation.Name;
-import com.almende.eve.agent.annotation.Required;
+import com.almende.eve.rpc.annotation.Name;
+import com.almende.eve.rpc.annotation.Required;
 import com.almende.eve.rpc.jsonrpc.JSONRequest;
 import com.almende.eve.rpc.jsonrpc.jackson.JOM;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class LocationAgent extends CapeStateAgent {
 	/** Android Application State, not Eve context! */
-	private static String BUILDING_URL = "xmpp:almende@openid.almende.org";
+	private static URI BUILDING_URL = URI.create("xmpp:almende@openid.almende.org");
 	LocationManager locationManager = null;
 
 	// Define a listener that responds to location updates
@@ -124,7 +125,7 @@ public class LocationAgent extends CapeStateAgent {
 		ObjectNode params = JOM.createObjectNode();
 		params.put("location",
 				JOM.getInstance().convertValue(location, ObjectNode.class));
-		eventsFactory.trigger("change", params);
+		getEventsFactory().trigger("change", params);
 		
 		// just push the location to the BuildingAgent
 		// TODO: replace by using event subscription
