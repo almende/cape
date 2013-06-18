@@ -18,7 +18,7 @@ import com.almende.cape.CapeClient;
 import com.almende.cape.handler.NotificationHandler;
 import com.almende.eve.agent.AgentHost;
 import com.almende.eve.scheduler.RunnableSchedulerFactory;
-import com.almende.eve.state.AndroidStateFactory;
+import com.almende.eve.state.FileStateFactory;
 
 public class CapeDemo extends Activity {
     private Logger logger = Logger.getLogger(this.getClass().getSimpleName());
@@ -46,9 +46,10 @@ public class CapeDemo extends Activity {
         try {
         	AgentHost af = AgentHost.getInstance();
         	Map<String, Object> params = new HashMap<String,Object>();
-        	params.put("AppContext", ctx);
+        	params.put("path", ctx.getFilesDir().getAbsolutePath()
+					+ "/.capeagents");
         
-        	af.setStateFactory(new AndroidStateFactory(params));
+        	af.setStateFactory(new FileStateFactory(params));
         	af.setSchedulerFactory(new RunnableSchedulerFactory(af, ".runnablescheduler"));
 		
         	cape = new CapeClient(af);
