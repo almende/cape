@@ -19,7 +19,7 @@ import com.almende.cape.entity.Message;
 import com.almende.cape.handler.MessageHandler;
 import com.almende.eve.agent.AgentHost;
 import com.almende.eve.scheduler.RunnableSchedulerFactory;
-import com.almende.eve.state.AndroidStateFactory;
+import com.almende.eve.state.FileStateFactory;
 
 public class CapeDemo extends Activity {
     private Logger logger = Logger.getLogger(this.getClass().getSimpleName());
@@ -49,7 +49,7 @@ public class CapeDemo extends Activity {
         	Map<String, Object> params = new HashMap<String,Object>();
         	params.put("AppContext", ctx);
         
-        	af.setStateFactory(new AndroidStateFactory(params));
+        	af.setStateFactory(new FileStateFactory(params));
         	af.setSchedulerFactory(new RunnableSchedulerFactory(af, ".runnablescheduler"));
 		
         	cape = new CapeClient(af);
