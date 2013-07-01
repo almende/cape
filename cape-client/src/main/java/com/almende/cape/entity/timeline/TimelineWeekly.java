@@ -112,6 +112,16 @@ public class TimelineWeekly {
 		end = end.dayOfWeek().setCopy( joda_till.getDayOfWeek() );
 		if( start.isAfter(end) )end = end.dayOfWeek().addToCopy( 7 );
 		
+		//whole week: empty planboard and put single slot
+		if( end_ms > start_ms && start.getMillis() == end.getMillis())
+		{
+			tl = new TimelineOnce(null);
+			start = new DateTime().withDayOfWeek(1).withTime(0, 0, 0, 0);
+			end   = new DateTime(start).plusWeeks(1);
+			
+			System.out.println("fill entire week "+start.getMillis() +"/"+ end.getMillis() );
+		}
+		
 		tl.insertSlot( start.getMillis(), end.getMillis(), value );
 		
 		// convert timeline back to events..
