@@ -208,10 +208,16 @@ public class TimelineOnce implements Timeline {
 		events_glue();
 	}
 
-	//TODO: add overlap functionPointer :(
-	String calc(String a,String b){ if(a==null&&b==null)return ";"; if(a==null)return ";"+b; if(b==null)return a+";"; return a+";"+b; }
-	public void combine(TimelineOnce src, String calcFunction )
+	// default overlap function(Pointer)
+	public class slot_combiner
 	{
+		public String mix(String a,String b)
+		{ if(a==null&&b==null)return ";"; if(a==null)return ";"+b; if(b==null)return a+";"; return a+";"+b; }	
+	}
+	public void combine(TimelineOnce src, slot_combiner sc)
+	{
+		if( sc == null )sc = new slot_combiner();
+				
 		String base=null,delta=null;
 		int si=0; //counters instead of iterators..
 		int di=0;
@@ -221,20 +227,20 @@ public class TimelineOnce implements Timeline {
 			{
 				delta = src.eventList.get(si).getValue();
 				base  = this.eventList.get(di).getValue();
-				this.eventList.get(di).setValue( calc(base,delta) );
+				this.eventList.get(di).setValue( sc.mix(base,delta) );
 				di++;
 				si++;
 			}
 			else if( this.eventList.get(di).getPos()< src.eventList.get(si).getPos() )
 			{
 				base = this.eventList.get(di).getValue();
-				this.eventList.get(di).setValue( calc(base,delta) );
+				this.eventList.get(di).setValue( sc.mix(base,delta) );
 				di++;
 			}
 			else if( src.eventList.get(si).getPos() < this.eventList.get(di).getPos() )
 			{
 				delta = src.eventList.get(si).getValue();
-				int index = this.events_addState( src.eventList.get(si).getPos(), calc(base,delta) );
+				int index = this.events_addState( src.eventList.get(si).getPos(), sc.mix(base,delta) );
 				// copy other items: this.eventList[index].extra = src.eventList[si].extra
 				di++;
 				si++;
@@ -245,13 +251,13 @@ public class TimelineOnce implements Timeline {
 		while( di < this.eventList.size() )
 		{
 			base = this.eventList.get(di).getValue();
-			this.eventList.get(di).setValue( calc(base,delta) );
+			this.eventList.get(di).setValue( sc.mix(base,delta) );
 			di++;
 		}
 		while( si < src.eventList.size() )
 		{
 			delta = src.eventList.get(si).getValue();
-			int index = this.events_addState( src.eventList.get(si).getPos(), calc(base,delta)  );
+			int index = this.events_addState( src.eventList.get(si).getPos(), sc.mix(base,delta)  );
 			// copy other items: this.eventList[index].extra = src.eventList[si].extra
 			si++;
 		}

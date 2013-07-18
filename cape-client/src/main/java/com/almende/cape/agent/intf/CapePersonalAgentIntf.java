@@ -7,4 +7,5 @@ public interface CapePersonalAgentIntf extends AgentInterface {
 	public String getPhone();
 	public String getEmail();
 	public String getPincode();
+	float mobilize();
 }
