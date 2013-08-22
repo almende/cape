@@ -17,7 +17,6 @@ import com.almende.cape.entity.timeline.Slot;
 import com.almende.cape.handler.MessageHandler;
 import com.almende.cape.handler.StateChangeHandler;
 import com.almende.eve.rpc.annotation.Name;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class CapeClientAgent extends CapeAgent {
 	public Set<Group> getGroups() throws Exception {
@@ -88,10 +87,8 @@ public class CapeClientAgent extends CapeAgent {
 		if(messageAgentURL==null) {
 			List<DataSource> dataSources = findDataSource(getId(), "message");
 			for(DataSource dataSource : dataSources) {
-				if(dataSource.getDirection().equals("producer")) {
-					getState().put("messageAgent", dataSource.getAgentUrl());
-					return dataSource.getAgentUrl();
-				}
+				getState().put("messageAgent", dataSource.getAgentUrl());
+				return dataSource.getAgentUrl();
 			}
 		}
 		return messageAgentURL;
@@ -110,10 +107,8 @@ public class CapeClientAgent extends CapeAgent {
 			List<DataSource> dataSources = findDataSource(getId(), "group");
 			logger.info("Search for ds:group from "+getId()+" and found: "+dataSources.size());
 			for(DataSource dataSource : dataSources) {
-				if(dataSource.getDirection().equals("producer")) {
-					getState().put("contactAgent", dataSource.getAgentUrl());
-					return dataSource.getAgentUrl();
-				}
+				getState().put("contactAgent", dataSource.getAgentUrl());
+				return dataSource.getAgentUrl();
 			}
 		}
 		return contactAgentURL;
@@ -131,10 +126,8 @@ public class CapeClientAgent extends CapeAgent {
 		if(contactAgentURL==null) {
 			List<DataSource> dataSources = findDataSource(getId(), "state");
 			for(DataSource dataSource : dataSources) {
-				if(dataSource.getDirection().equals("producer")) {
-					getState().put("stateAgent", dataSource.getAgentUrl());
-					return dataSource.getAgentUrl();
-				}
+				getState().put("stateAgent", dataSource.getAgentUrl());
+				return dataSource.getAgentUrl();
 			}
 		}
 		return contactAgentURL;

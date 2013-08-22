@@ -8,7 +8,7 @@ public abstract class CapeContactAgent extends CapeAgent implements CapeGroupAge
 	@Override
 	public void connect () throws Exception {
 		super.connect();
-		register(DATA_TYPE, null);
+		register(DATA_TYPE);
 	}
 	
 	@Override

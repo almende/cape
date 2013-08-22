@@ -9,6 +9,7 @@ import java.util.logging.Logger;
 import com.almende.cape.entity.DataSource;
 import com.almende.eve.agent.Agent;
 import com.almende.eve.agent.AgentHost;
+import com.almende.eve.config.Config;
 import com.almende.eve.rpc.annotation.Access;
 import com.almende.eve.rpc.annotation.AccessType;
 import com.almende.eve.rpc.annotation.Name;
@@ -175,26 +176,24 @@ public abstract class CapeAgent extends Agent {
 	 * @param direction (default = consumer)
 	 * @throws Exception
 	 */
-	protected void register(@Name("dataType") String dataType, @Name("direction") @Required(false) String direction) throws Exception {
+	protected void register(@Name("dataType") String dataType) throws Exception {
 		String username = getUsername();
 		if (username == null) {
 			throw new IllegalArgumentException("No username set. " +
 					"Set username and password first using setAccount().");
 		}
 		
-		if(direction == null)
-			direction = "consumer";
-		
 		String method = "register";
+		
+		DataSource dataSource = new DataSource();
+		dataSource.setUserId(username);
+		dataSource.setAgentUrl(getXmppUrl());
+		dataSource.setDataType(dataType);
+		
 		ObjectNode params = JOM.createObjectNode();
-		ObjectNode dataSource = JOM.createObjectNode();
-		dataSource.put("userId", username);
-		dataSource.put("agentUrl", getXmppUrl());
-		dataSource.put("dataType", dataType);
-		dataSource.put("direction", direction);
-		params.put("dataSource", dataSource);
-		// TODO: replace ObjectNode with DataSource
-		send(URI.create(MERLIN_URL), method, params);		
+		params.put("dataSource", JOM.getInstance().convertValue(dataSource, ObjectNode.class));
+		
+		send(URI.create(getMerlinUrl()), method, params);		
 	}
 
 	protected String getUsername() {
@@ -215,14 +214,14 @@ public abstract class CapeAgent extends Agent {
 		
 		if (username != null) {
 			String method = "unregister";
+			DataSource dataSource = new DataSource();
+			dataSource.setUserId(username);
+			dataSource.setAgentUrl(getXmppUrl());
+			dataSource.setDataType(dataType);
+			
 			ObjectNode params = JOM.createObjectNode();
-			ObjectNode dataSource = JOM.createObjectNode();
-			dataSource.put("userId", username);
-			dataSource.put("agentUrl", getXmppUrl());
-			dataSource.put("dataType", dataType);
-			params.put("dataSource", dataSource);
-			// TODO: replace ObjectNode with DataSource			
-			send(URI.create(MERLIN_URL), method, params);
+			params.put("dataSource", JOM.getInstance().convertValue(dataSource, ObjectNode.class));		
+			send(URI.create(getMerlinUrl()), method, params);
 		}
 	}
 
@@ -244,7 +243,7 @@ public abstract class CapeAgent extends Agent {
 				userId + " and dataType=" + dataType);
 
 		List<DataSource> agentSources = new ArrayList<DataSource>();
-		ArrayNode dataSources = send(URI.create(MERLIN_URL), method, params, ArrayNode.class);
+		ArrayNode dataSources = send(URI.create(getMerlinUrl()), method, params, ArrayNode.class);
 		Iterator<JsonNode> it = dataSources.elements(); 
 		while(it.hasNext()) {
 			agentSources.add(JOM.getInstance().convertValue(it.next(), DataSource.class));
@@ -320,6 +319,20 @@ public abstract class CapeAgent extends Agent {
 			}
 		}
 		return null;
+	}
+	
+	/**
+	 * Returns the address of merlin based on the the address configured in eve.yaml.
+	 * The default is configured in the static: xmpp:merlin@openid.ask-cs.com
+	 * @return merlin url
+	 */
+	protected String getMerlinUrl() {
+		String environment = Config.getEnvironment();
+		String url = getAgentHost().getConfig().get("environment", environment, "merlin_address");
+		if(url==null)
+			url = MERLIN_URL;
+		
+		return url;
 	}
 	
 	private Logger logger = Logger.getLogger(this.getClass().getSimpleName());

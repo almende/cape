@@ -10,7 +10,7 @@ public abstract class CapeDialogAgent extends CapeAgent {
 	@Override
 	public void connect () throws Exception {
 		super.connect();
-		register(DATA_TYPE, null);
+		register(DATA_TYPE);
 	}
 	
 	@Override

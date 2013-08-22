@@ -2,8 +2,8 @@ package com.almende.cape.entity;
 
 import java.io.Serializable;
 
-@SuppressWarnings("serial")
 public class DataSource implements Serializable {
+	private static final long serialVersionUID = 1L;
 	public DataSource() {}
 	
 	public String getAgentUrl() {
@@ -29,15 +29,6 @@ public class DataSource implements Serializable {
 	public void setDataType(String dataType) {
 		this.dataType = dataType;
 	}
-	
-	public String getDirection() {
-		return direction;
-	}
-	
-	public void setDirection(String direction) {
-		this.direction = direction;
-	}
-
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) {
@@ -59,5 +50,4 @@ public class DataSource implements Serializable {
 	private String userId = null;
 	private String agentUrl = null;
 	private String dataType = null;
-	private String direction = null;
 }

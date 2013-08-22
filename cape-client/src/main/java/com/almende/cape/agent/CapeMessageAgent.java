@@ -8,7 +8,7 @@ public abstract class CapeMessageAgent extends CapeAgent implements CapeMessageA
 	@Override
 	public void connect () throws Exception {
 		super.connect();
-		register(DATA_TYPE, null);
+		register(DATA_TYPE);
 	}
 	
 	@Override
