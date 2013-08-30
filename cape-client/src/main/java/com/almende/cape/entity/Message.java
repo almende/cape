@@ -1,9 +1,12 @@
 package com.almende.cape.entity;
 
 import java.util.Set;
+import java.io.Serializable;
 
 
-public class Message {
+public class Message implements Serializable {
+
+	// private static final long serialVersionUID = 7865262235394607247L;
 	
 	public Message(){}
 

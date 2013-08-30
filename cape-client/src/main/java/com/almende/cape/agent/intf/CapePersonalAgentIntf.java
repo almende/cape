@@ -9,4 +9,6 @@ public interface CapePersonalAgentIntf extends AgentInterface {
 	public String getPincode();
 	String getBestPhoneAddress();
 	void setLastAvailCall(long timestamp);
+
+	public String getMessageAgentURL();
 }

@@ -29,4 +29,9 @@ public interface CapeMessageAgentIntf extends AgentInterface {
 			@Name("limit") @Required(false) Integer limit) throws Exception;
 
 	public void deleteMessages() throws Exception;
+	
+	// some lowlevel methods
+	public Message getMessageByID(@Name("id") String id);
+	public void updateMessageByID(@Name("msg") Message msg);
+	public void deleteMessageByID(@Name("id") String id);
 }
