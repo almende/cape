@@ -6,6 +6,12 @@ public class DataSource implements Serializable {
 	private static final long serialVersionUID = 1L;
 	public DataSource() {}
 	
+	public DataSource(String userId, String agentUrl, String dataType) {
+		this.userId = userId;
+		this.agentUrl = agentUrl;
+		this.dataType = dataType;
+	}
+	
 	public String getAgentUrl() {
 		return agentUrl;
 	}
