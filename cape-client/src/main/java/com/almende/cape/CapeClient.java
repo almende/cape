@@ -5,7 +5,6 @@ import java.util.Set;
 import com.almende.cape.agent.CapeClientAgent;
 import com.almende.cape.entity.Group;
 import com.almende.cape.handler.MessageHandler;
-import com.almende.cape.handler.StateChangeHandler;
 import com.almende.eve.agent.AgentHost;
 import com.almende.eve.scheduler.RunnableSchedulerFactory;
 import com.almende.eve.state.MemoryStateFactory;
@@ -27,7 +26,14 @@ public class CapeClient {
 	public CapeClient() {
 		this(AgentHost.getInstance());
 	}
-	public CapeClient(AgentHost factory){
+	public CapeClient( AgentHost factory ){
+		this( factory, "openid.ask-cs.com" );
+	}
+	public CapeClient( AgentHost factory, String host ) {
+		this( factory, host, 5222 );
+	}
+
+	public CapeClient( AgentHost factory, String host, int port ) {
 		if (factory == null) {
 			try {
 				factory = AgentHost.getInstance();
@@ -35,17 +41,15 @@ public class CapeClient {
 				factory.setSchedulerFactory(new RunnableSchedulerFactory(factory, ".runnablescheduler"));
 			} catch (Exception e) {
 				e.printStackTrace();
-				System.err.println("Failed to init factory!");
+				System.err.println("Failed to init factory!" + e.getMessage());
 			}
 		}
-		//String host = "openid.almende.org";
-		String host = "openid.ask-cs.com";
-		Integer port = 5222;
 		String service = host;
 		XmppService xmppService = new XmppService(factory,host, port, service);
 		factory.addTransportService(xmppService);
 		this.factory=factory;
 	}
+
 	/**
 	 * Login to CAPE
 	 * @param username
