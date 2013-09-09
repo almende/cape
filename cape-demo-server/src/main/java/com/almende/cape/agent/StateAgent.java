@@ -18,7 +18,7 @@ public class StateAgent extends CapeStateAgent {
 	@Override
 	public Object getState(@Name("state") String state) {
 		if (state.equals("location")) {
-			return getState().get("location");
+			return getState().get("location", Object.class);
 		}
 		else {
 			// TODO: implement other states
@@ -67,7 +67,7 @@ public class StateAgent extends CapeStateAgent {
 	 * Stop simulation of the location
 	 */
 	public void stopSimulation() {
-		String taskId = (String) getState().get("taskId");
+		String taskId = getState().get("taskId", String.class);
 		if (taskId != null) {
 			getScheduler().cancelTask(taskId);
 			getState().remove("taskId");

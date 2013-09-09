@@ -50,7 +50,7 @@ public class LocationAgent extends CapeStateAgent {
 
 	public void startSensor() throws Exception {
 		stopSimulation();
-		Activity context = (Activity) getState().get("AppContext");
+		Activity context = getState().get("AppContext",Activity.class);
 		// Acquire a reference to the system Location Manager
 		locationManager = (LocationManager) context
 				.getSystemService(Context.LOCATION_SERVICE);
@@ -88,7 +88,7 @@ public class LocationAgent extends CapeStateAgent {
 	@Override
 	public Object getState(@Name("state") String state) throws Exception {
 		if (state.equals("location")) {
-			return getState().get("location");
+			return getState().get("location", Object.class);
 		} else {
 			// no information available for other states
 			throw new Exception("No information available for state '" + state
@@ -136,7 +136,7 @@ public class LocationAgent extends CapeStateAgent {
 		changeParams.put("params", params);
 		send(BUILDING_URL, "onChange", changeParams);
 		
-		Activity act = (Activity) getState().get("AppContext");
+		Activity act = getState().get("AppContext",Activity.class);
 		if (act != null) {
 			act.runOnUiThread(new MyRunnable("Location:"+lat + ":" + lng + " - "+description, act));
 			logger.info("Set location:"+lat+":"+lng+"::"+description);	
@@ -172,7 +172,7 @@ public class LocationAgent extends CapeStateAgent {
 	 * Stop simulation of the location
 	 */
 	public void stopSimulation() {
-		String taskId = (String) getState().get("taskId");
+		String taskId = getState().get("taskId", String.class);
 		if (taskId != null) {
 			getScheduler().cancelTask(taskId);
 			getState().remove("taskId");
@@ -198,7 +198,6 @@ public class LocationAgent extends CapeStateAgent {
 	 * Update the location based on a simple time based algorithm: The location
 	 * will circle around Rotterdam once an hour.
 	 */
-	@SuppressWarnings("unchecked")
 	public void updateLocation() {
 
 		// Move from current location for a couple of meters towards the
@@ -207,7 +206,7 @@ public class LocationAgent extends CapeStateAgent {
 			HashMap<String, Object> location = null;
 			//TODO: default naar Almende's locatie.
 			if (getState().containsKey("location")) {
-				location = (HashMap<String, Object>) getState().get("location");
+				location = getState().get(location,"location");
 			}
 
 			Double lat = (Double) location.get("lat");
@@ -236,7 +235,7 @@ public class LocationAgent extends CapeStateAgent {
 	 * @throws Exception
 	 */
 	public void registerBuilding() throws Exception {
-		String userId = (String) getState().get("xmppUsername");
+		String userId = getState().get("xmppUsername",String.class);
 		logger.info("registering userId " + userId + " at building agent...");
 		if (userId != null) {
 			// register our use at the building agent
@@ -256,7 +255,7 @@ public class LocationAgent extends CapeStateAgent {
 	 * @throws Exception
 	 */
 	public void unregisterBuilding() throws Exception {
-		String userId = (String) getState().get("xmppUsername");
+		String userId = getState().get("xmppUsername",String.class);
 		logger.info("unregistering userId " + userId + " at building agent...");
 		if (userId != null) {
 			// register our use at the building agent

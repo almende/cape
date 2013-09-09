@@ -12,9 +12,9 @@ import com.almende.eve.rpc.annotation.Required;
 import com.almende.eve.rpc.jsonrpc.JSONRequest;
 import com.almende.eve.rpc.jsonrpc.jackson.JOM;
 import com.almende.eve.state.State;
+import com.almende.eve.state.TypedKey;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-@SuppressWarnings("unchecked")
 public class BuildingAgent extends CapeAgent {
 	private static Double MAX_RANGE = 1.0; // km
 	
@@ -62,7 +62,7 @@ public class BuildingAgent extends CapeAgent {
 	 * @return location. An object containing parameters lat and lng
 	 */
 	public Location getLocation() {
-		return (Location) getState().get("location");
+		return getState().get("location", Location.class);
 	}
 	
 	/**
@@ -94,7 +94,7 @@ public class BuildingAgent extends CapeAgent {
 		
 		// add the user to the list with registered users
 		State context = getState();
-		ArrayList<Person> users = (ArrayList<Person>) context.get("users");
+		ArrayList<Person> users = context.get(new TypedKey<ArrayList<Person>>("users"));
 		if (users == null) {
 			users = new ArrayList<Person>();
 		}	
@@ -112,7 +112,7 @@ public class BuildingAgent extends CapeAgent {
 		
 		// add the user to the list with registered users
 		State context = getState();
-		ArrayList<Person> users = (ArrayList<Person>) context.get("users");
+		ArrayList<Person> users = context.get(new TypedKey<ArrayList<Person>>("users"));
 		if (users != null) {
 			int i = 0;
 			while (i < users.size()) {
@@ -142,7 +142,7 @@ public class BuildingAgent extends CapeAgent {
 	 * @return users
 	 */
 	public List<Person> list(@Required(false) @Name("status") String status) {
-		List<Person> users = (List<Person>) getState().get("users");
+		List<Person> users = getState().get(new TypedKey<ArrayList<Person>>("users"));
 		if (users != null) {
 			if ("in".equals(status)) {
 				Boolean present = true;
@@ -209,7 +209,7 @@ public class BuildingAgent extends CapeAgent {
 		
 		// find the user from the list, and update its location
 		State context = getState();
-		ArrayList<Person> users = (ArrayList<Person>) context.get("users");
+		ArrayList<Person> users = context.get(new TypedKey<ArrayList<Person>>("users"));
 		if (users != null) {
 			// calculate the number of present users
 			List<Person> presentUsers = filter(users, true);
@@ -223,7 +223,7 @@ public class BuildingAgent extends CapeAgent {
 					if (params.has("location")) {
 						user.location = new Location((ObjectNode) params.get("location"));
 
-						Location buildingLocation = (Location) context.get("location");
+						Location buildingLocation = context.get("location",Location.class);
 						if (buildingLocation != null && user.location != null) {
 							// calculate distance to building
 							user.distance = distance(buildingLocation, user.location);
@@ -266,7 +266,7 @@ public class BuildingAgent extends CapeAgent {
 	 */
 	public Map<String, Object> overview() {
 		Map<String, Object> info = new HashMap<String, Object>();
-		List<Person> users = (List<Person>) getState().get("users");
+		List<Person> users = getState().get(new TypedKey<ArrayList<Person>>("users"));
 		if (users != null) {
 			List<String> in = new ArrayList<String>();
 			List<String> out = new ArrayList<String>();

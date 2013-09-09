@@ -126,9 +126,9 @@ public class ContactAgent extends CapeContactAgent {
 	
 	public void xmppConnect(@Name("username") String username,
 	        @Name("password") String password) throws Exception {
-	    AgentHost factory = getAgentFactory();
+	    AgentHost host = getAgentHost();
 
-	    XmppService service = (XmppService) factory.getTransportService("xmpp");
+	    XmppService service = (XmppService) host.getTransportService("xmpp");
 	    if (service != null) {
 	        service.connect(getId(), username, password);
 	    }
@@ -138,8 +138,8 @@ public class ContactAgent extends CapeContactAgent {
 	}
 
 	public void xmppDisconnect() throws Exception {
-	    AgentHost factory = getAgentFactory();
-	    XmppService service = (XmppService) factory.getTransportService("xmpp");
+	    AgentHost host = getAgentHost();
+	    XmppService service = (XmppService) host.getTransportService("xmpp");
 	    if (service != null) {
 	        service.disconnect(getId());
 	    }

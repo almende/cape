@@ -21,7 +21,7 @@ public class MerlinAgent extends CapeAgent {
 	@Override
 	public void create () {
 		try {
-			Config config = getAgentFactory().getConfig();
+			Config config = getAgentHost().getConfig();
 			String username = config.get("cape", "merlin", "username");
 			String password = config.get("cape", "merlin", "password");
 			String resource = config.get("cape", "merlin", "resource");

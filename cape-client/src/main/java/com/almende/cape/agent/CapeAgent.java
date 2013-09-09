@@ -111,8 +111,8 @@ public abstract class CapeAgent extends Agent {
 	 */
 	protected boolean verifyAccount(String username, String password) {
 		State context = getState();
-		String currentUsername = (String) context.get("xmppUsername");
-		String currentPassword = (String) context.get("xmppPassword");
+		String currentUsername = context.get("xmppUsername", String.class);
+		String currentPassword = context.get("xmppPassword", String.class);
 		if (currentUsername == null)
 			System.err.println("CurrentUsername is null");
 		if (currentPassword == null)
@@ -130,13 +130,13 @@ public abstract class CapeAgent extends Agent {
 	 * @throws Exception
 	 */
 	public void connect() throws Exception {
-		AgentHost factory = getAgentFactory();
+		AgentHost factory = getAgentHost();
 		XmppService service = (XmppService) factory.getTransportService("xmpp");
 		if (service != null) {
 			State context = getState();
-			String username = (String) context.get("xmppUsername");
-			String password = (String) context.get("xmppPassword");
-			String resource = (String) context.get("xmppResource");
+			String username = context.get("xmppUsername", String.class);
+			String password = context.get("xmppPassword", String.class);
+			String resource = context.get("xmppResource", String.class);
 			if (username == null) {
 				throw new Exception(
 						"Cannot connect: no username set. "
@@ -166,7 +166,7 @@ public abstract class CapeAgent extends Agent {
 	 * @throws Exception
 	 */
 	public void disconnect() throws Exception {
-		AgentHost factory = getAgentFactory();
+		AgentHost factory = getAgentHost();
 		XmppService service = (XmppService) factory.getTransportService("xmpp");
 		if (service != null) {
 			service.disconnect(getId());
@@ -200,7 +200,7 @@ public abstract class CapeAgent extends Agent {
 	}
 
 	protected String getUsername() {
-		return (String) getState().get("xmppUsername");
+		return getState().get("xmppUsername", String.class);
 	}
 
 	/**

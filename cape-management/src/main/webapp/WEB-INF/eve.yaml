@@ -1,11 +1,5 @@
 # Eve settings
 
-services:
-- class: XmppService
-  host: openid.almende.org
-  port: 5222
-  service: openid.almende.org
-
 # context settings (for persistency)
 state:
   class: FileStateFactory
@@ -13,6 +7,16 @@ state:
 
 # scheduler settings (for tasks)
 scheduler:
-  class: RunnableSchedulerFactory
+  class: ClockSchedulerFactory
 
+transport_services:
+- class: XmppService
+  host: openid.almende.org
+  port: 5222
+  service: openid.almende.org
+
+
+bootstrap:
+  agents:
+     management: com.almende.cape.agent.CapeManagerAgent
 

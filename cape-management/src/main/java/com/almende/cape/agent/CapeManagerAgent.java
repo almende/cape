@@ -2,6 +2,8 @@ package com.almende.cape.agent;
 
 import com.almende.cape.LDAP;
 import com.almende.eve.agent.Agent;
+import com.almende.eve.rpc.annotation.Access;
+import com.almende.eve.rpc.annotation.AccessType;
 import com.almende.eve.rpc.annotation.Name;
 import com.novell.ldap.LDAPAttribute;
 import com.novell.ldap.LDAPAttributeSet;
@@ -9,6 +11,7 @@ import com.novell.ldap.LDAPConnection;
 import com.novell.ldap.LDAPEntry;
 import com.novell.ldap.LDAPException;
 
+@Access(AccessType.PUBLIC)
 public class CapeManagerAgent extends Agent {
 	public String registerAgent(@Name("username") String username,
 			@Name("domain") String domain, @Name("password") String password,
@@ -30,9 +33,10 @@ public class CapeManagerAgent extends Agent {
 			attr.add(new LDAPAttribute("objectClass", "person"));
 			attr.add(new LDAPAttribute("objectClass", "top"));
 			attr.add(new LDAPAttribute("userPassword", password));
-
+			
 			LDAPEntry entry = new LDAPEntry("uid=" + username + ",ou=" + domain
 					+ "_Users,dc=cape,dc=almende,dc=org", attr);
+			//TODO: update agent if exists?
 			conn.add(entry);
 		} catch (LDAPException e) {
 			throw new Exception("Failed to add agent to LDAP", e);
