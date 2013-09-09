@@ -17,6 +17,7 @@ import com.almende.eve.rpc.annotation.Name;
 import com.almende.eve.rpc.annotation.Required;
 import com.almende.eve.rpc.jsonrpc.JSONRequest;
 import com.almende.eve.rpc.jsonrpc.jackson.JOM;
+import com.almende.util.TypeUtil;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class LocationAgent extends CapeStateAgent {
@@ -206,7 +207,7 @@ public class LocationAgent extends CapeStateAgent {
 			HashMap<String, Object> location = null;
 			//TODO: default naar Almende's locatie.
 			if (getState().containsKey("location")) {
-				location = getState().get(location,"location");
+				location = getState().get("location", new TypeUtil<HashMap<String, Object>>(){});
 			}
 
 			Double lat = (Double) location.get("lat");
