@@ -94,7 +94,7 @@ public class BuildingAgent extends CapeAgent {
 		
 		// add the user to the list with registered users
 		State context = getState();
-		ArrayList<Person> users = context.get(new TypedKey<ArrayList<Person>>("users"));
+		ArrayList<Person> users = context.get(new TypedKey<ArrayList<Person>>("users"){});
 		if (users == null) {
 			users = new ArrayList<Person>();
 		}	
@@ -112,7 +112,7 @@ public class BuildingAgent extends CapeAgent {
 		
 		// add the user to the list with registered users
 		State context = getState();
-		ArrayList<Person> users = context.get(new TypedKey<ArrayList<Person>>("users"));
+		ArrayList<Person> users = context.get(new TypedKey<ArrayList<Person>>("users"){});
 		if (users != null) {
 			int i = 0;
 			while (i < users.size()) {
@@ -142,7 +142,7 @@ public class BuildingAgent extends CapeAgent {
 	 * @return users
 	 */
 	public List<Person> list(@Required(false) @Name("status") String status) {
-		List<Person> users = getState().get(new TypedKey<ArrayList<Person>>("users"));
+		List<Person> users = getState().get(new TypedKey<ArrayList<Person>>("users"){});
 		if (users != null) {
 			if ("in".equals(status)) {
 				Boolean present = true;
@@ -209,7 +209,7 @@ public class BuildingAgent extends CapeAgent {
 		
 		// find the user from the list, and update its location
 		State context = getState();
-		ArrayList<Person> users = context.get(new TypedKey<ArrayList<Person>>("users"));
+		ArrayList<Person> users = context.get(new TypedKey<ArrayList<Person>>("users"){});
 		if (users != null) {
 			// calculate the number of present users
 			List<Person> presentUsers = filter(users, true);
@@ -266,7 +266,7 @@ public class BuildingAgent extends CapeAgent {
 	 */
 	public Map<String, Object> overview() {
 		Map<String, Object> info = new HashMap<String, Object>();
-		List<Person> users = getState().get(new TypedKey<ArrayList<Person>>("users"));
+		List<Person> users = getState().get(new TypedKey<ArrayList<Person>>("users"){});
 		if (users != null) {
 			List<String> in = new ArrayList<String>();
 			List<String> out = new ArrayList<String>();
