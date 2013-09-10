@@ -15,9 +15,9 @@
 	<packaging>apk</packaging>
 
 	<properties>
-		<android.version>4.1.1.4</android.version>
-		<android.target>17</android.target>
-		<android-maven-plugin.version>3.1.1</android-maven-plugin.version>
+                <android.version>4.1.1.4</android.version>
+		<android.target>18</android.target>
+		<android-maven-plugin.version>3.6.1</android-maven-plugin.version>
 		<maven-compiler-plugin.version>2.3.2</maven-compiler-plugin.version>
 	</properties>
 
@@ -87,4 +87,5 @@
 			</plugin>
 		</plugins>
 	</build>
+
 </project>
