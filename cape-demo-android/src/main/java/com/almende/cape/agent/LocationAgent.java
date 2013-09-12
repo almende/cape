@@ -20,6 +20,7 @@ import com.almende.eve.rpc.annotation.Name;
 import com.almende.eve.rpc.annotation.Required;
 import com.almende.eve.rpc.jsonrpc.JSONRequest;
 import com.almende.eve.rpc.jsonrpc.jackson.JOM;
+import com.almende.util.TypeUtil;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class LocationAgent extends CapeStateAgent {
@@ -53,7 +54,7 @@ public class LocationAgent extends CapeStateAgent {
 
 	public void startSensor() throws Exception {
 		stopSimulation();
-		Activity context = (Activity) getState().get("AppContext");
+		Activity context = getState().get("AppContext", Activity.class);
 		// Acquire a reference to the system Location Manager
 		locationManager = (LocationManager) context
 				.getSystemService(Context.LOCATION_SERVICE);
@@ -120,7 +121,7 @@ public class LocationAgent extends CapeStateAgent {
 		changeParams.put("params", params);
 		send(URI.create(BUILDING_URL), "onChange", changeParams);
 		
-		Activity act = (Activity) getState().get("AppContext");
+		Activity act = getState().get("AppContext", Activity.class);
 		if (act != null) {
 			act.runOnUiThread(new MyRunnable("Location:"+lat + ":" + lng + " - "+description, act));
 			logger.info("Set location:"+lat+":"+lng+"::"+description);	
@@ -156,7 +157,7 @@ public class LocationAgent extends CapeStateAgent {
 	 * Stop simulation of the location
 	 */
 	public void stopSimulation() {
-		String taskId = (String) getState().get("taskId");
+		String taskId = getState().get("taskId", String.class);
 		if (taskId != null) {
 			getScheduler().cancelTask(taskId);
 			getState().remove("taskId");
@@ -191,7 +192,7 @@ public class LocationAgent extends CapeStateAgent {
 			HashMap<String, Object> location = null;
 			//TODO: default naar Almende's locatie.
 			if (getState().containsKey("location")) {
-				location = (HashMap<String, Object>) getState().get("location");
+				location = getState().get("location", new TypeUtil<HashMap<String, Object>>(){});
 			}
 
 			Double lat = (Double) location.get("lat");
@@ -220,7 +221,7 @@ public class LocationAgent extends CapeStateAgent {
 	 * @throws Exception
 	 */
 	public void registerBuilding() throws Exception {
-		String userId = (String) getState().get("xmppUsername");
+		String userId = getState().get("xmppUsername", String.class);
 		logger.info("registering userId " + userId + " at building agent...");
 		if (userId != null) {
 			// register our use at the building agent
@@ -240,7 +241,7 @@ public class LocationAgent extends CapeStateAgent {
 	 * @throws Exception
 	 */
 	public void unregisterBuilding() throws Exception {
-		String userId = (String) getState().get("xmppUsername");
+		String userId = getState().get("xmppUsername", String.class);
 		logger.info("unregistering userId " + userId + " at building agent...");
 		if (userId != null) {
 			// register our use at the building agent

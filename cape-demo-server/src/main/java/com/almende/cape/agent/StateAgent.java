@@ -3,12 +3,11 @@ package com.almende.cape.agent;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.Map;
 
 import com.almende.cape.entity.timeline.Slot;
-import com.almende.eve.rpc.jsonrpc.JSONRequest;
 import com.almende.eve.rpc.annotation.Name;
 import com.almende.eve.rpc.annotation.Required;
+import com.almende.eve.rpc.jsonrpc.JSONRequest;
 import com.almende.eve.rpc.jsonrpc.jackson.JOM;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
@@ -55,7 +54,7 @@ public class StateAgent extends CapeStateAgent {
 	 * Stop simulation of the location
 	 */
 	public void stopSimulation() {
-		String taskId = (String) getState().get("taskId");
+		String taskId = getState().get("taskId", String.class);
 		if (taskId != null) {
 			getScheduler().cancelTask(taskId);
 			getState().remove("taskId");

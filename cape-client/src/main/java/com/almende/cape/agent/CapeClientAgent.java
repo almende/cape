@@ -83,7 +83,7 @@ public class CapeClientAgent extends CapeAgent {
 	}
 	
 	private String getMessageAgentUrl() throws Exception {
-		String messageAgentURL = (String) getState().get("messageAgent");
+		String messageAgentURL = getState().get("messageAgent", String.class);
 		if(messageAgentURL==null) {
 			List<DataSource> dataSources = findDataSource(getId(), "message");
 			for(DataSource dataSource : dataSources) {
@@ -102,7 +102,7 @@ public class CapeClientAgent extends CapeAgent {
 	}
 	
 	private String getContactAgentUrl() throws Exception {
-		String contactAgentURL = (String) getState().get("contactAgent");
+		String contactAgentURL = getState().get("contactAgent", String.class);
 		if(contactAgentURL==null) {
 			List<DataSource> dataSources = findDataSource(getId(), "group");
 			logger.info("Search for ds:group from "+getId()+" and found: "+dataSources.size());
@@ -122,7 +122,7 @@ public class CapeClientAgent extends CapeAgent {
 	}
 	
 	private String getStateAgentUrl() throws Exception {
-		String contactAgentURL = (String) getState().get("stateAgent");
+		String contactAgentURL = getState().get("stateAgent", String.class);
 		if(contactAgentURL==null) {
 			List<DataSource> dataSources = findDataSource(getId(), "state");
 			for(DataSource dataSource : dataSources) {

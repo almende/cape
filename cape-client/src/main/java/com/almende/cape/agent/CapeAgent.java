@@ -116,8 +116,8 @@ public abstract class CapeAgent extends Agent {
 	 */
 	protected boolean verifyAccount(String username, String password) {
 		State context = getState();
-		String currentUsername = (String) context.get("xmppUsername");
-		String currentPassword = (String) context.get("xmppPassword");
+		String currentUsername = context.get("xmppUsername", String.class);
+		String currentPassword = context.get("xmppPassword", String.class);
 		if (currentUsername == null) System.err.println("CurrentUsername is null");
 		if (currentPassword == null) System.err.println("currentPassword is null");
 		System.err.println("Compare:'"+currentUsername+"'/'"+currentPassword+"' to '"+username+"'/'"+password+"'");
@@ -134,9 +134,9 @@ public abstract class CapeAgent extends Agent {
 		XmppService service = (XmppService) factory.getTransportService("xmpp");
 		if (service != null) {
 			State context = getState();
-			String username = (String) context.get("xmppUsername");
-			String password = (String) context.get("xmppPassword");
-			String resource = (String) context.get("xmppResource");
+			String username = context.get("xmppUsername", String.class);
+			String password = context.get("xmppPassword", String.class);
+			String resource = context.get("xmppResource", String.class);
 			if (username == null) {
 				throw new Exception(
 					"Cannot connect: no username set. " +
@@ -197,11 +197,11 @@ public abstract class CapeAgent extends Agent {
 	}
 
 	protected String getUsername() {
-		return (String) getState().get("xmppUsername");
+		return getState().get("xmppUsername", String.class);
 	}
 	
 	protected String getPassword() {
-		return (String) getState().get("xmppPassword");
+		return getState().get("xmppPassword", String.class);
 	}
 	
 	/**
@@ -328,10 +328,14 @@ public abstract class CapeAgent extends Agent {
 	 */
 	protected String getMerlinUrl() {
 		String environment = Config.getEnvironment();
-		String url = getAgentHost().getConfig().get("environment", environment, "merlin_address");
-		if(url==null)
+		Config config = getAgentHost().getConfig();
+		String url = null;
+		if ( config != null ) {
+		  url = config.get("environment", environment, "merlin_address");
+		}
+		if(url==null) {
 			url = MERLIN_URL;
-		
+		}
 		return url;
 	}
 	

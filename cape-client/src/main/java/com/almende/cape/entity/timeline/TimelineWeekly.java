@@ -44,7 +44,7 @@ public class TimelineWeekly {
 	{
 		TimelineWeekly  tlr = new TimelineWeekly(null);
 		
-		String blob =(String)ctx.get("eventsWeekly");
+		String blob = ctx.get("eventsWeekly", String.class);
 		if( blob == null )return tlr;
 		
 		// flexjson.JSONDeserializer<java.util.ArrayList<cEvent_weeklyRecurring>> deser = new flexjson.JSONDeserializer<java.util.ArrayList<cEvent_weeklyRecurring>>();

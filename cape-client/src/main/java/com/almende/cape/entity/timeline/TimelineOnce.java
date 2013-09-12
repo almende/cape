@@ -56,7 +56,7 @@ public class TimelineOnce implements Timeline {
 	{
 		TimelineOnce tl = new TimelineOnce(null);
 		
-		String blob =(String)ctx.get("events");
+		String blob = ctx.get("events", String.class);
 		if( blob == null )return tl;
 		
 		// flexjson.JSONDeserializer<java.util.ArrayList<cEvent>> deser = new flexjson.JSONDeserializer<java.util.ArrayList<cEvent>>();
