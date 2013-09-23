@@ -22,7 +22,7 @@
 	</modules>
 
 	<properties>
-		<eve.version>1.2.0-SNAPSHOT</eve.version>
+		<eve.version>2.1.0-SNAPSHOT</eve.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.scm.version>1.8.1</maven.scm.version>
 		<wagon-scm.version>2.2</wagon-scm.version>
