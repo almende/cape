@@ -15,4 +15,6 @@ public interface CapePersonalAgentIntf extends AgentInterface {
 
 	public void setResource(@Name("key") String key, @Name("value")  String value);
 	public String getResource(@Name("key") String key);
+	
+	public String getDomainAgent();
 }

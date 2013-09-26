@@ -7,4 +7,6 @@ import com.almende.eve.rpc.annotation.Required;
 public interface CapeMonitorAgentIntf extends AgentInterface {
 	
 	public int checkShortage(@Name("state") @Required(false) String state) throws Exception;
+	
+	public String getMonitorGroup();
 }

@@ -13,5 +13,7 @@ public interface CapeDomainAgentIntf extends AgentInterface {
 	public Set<String> findUser(@Name("name") @Required(false) String name,
 			@Name("phone") @Required(false) String phone,
 			@Name("email") @Required(false) String email,
-			@Name("pincode") @Required(false) String pincode) throws Exception; 
+			@Name("pincode") @Required(false) String pincode) throws Exception;
+	
+	public Set<String> getMonitorAgents();
 }
