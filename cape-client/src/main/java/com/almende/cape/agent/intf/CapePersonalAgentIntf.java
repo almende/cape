@@ -1,5 +1,8 @@
 package com.almende.cape.agent.intf;
 
+import java.util.Set;
+
+import com.almende.cape.entity.Group;
 import com.almende.eve.agent.AgentInterface;
 import com.almende.eve.rpc.annotation.Name;
 
@@ -17,4 +20,6 @@ public interface CapePersonalAgentIntf extends AgentInterface {
 	public String getResource(@Name("key") String key);
 	
 	public String getDomainAgent();
+	
+	public Set<Group> getParentGroups() throws Exception;
 }
