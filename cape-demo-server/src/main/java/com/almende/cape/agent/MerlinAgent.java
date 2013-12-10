@@ -12,7 +12,7 @@ import com.almende.cape.DB;
 import com.almende.cape.entity.DataSource;
 import com.almende.eve.config.Config;
 import com.almende.eve.rpc.annotation.Name;
-import com.almende.eve.rpc.annotation.Required;
+import com.almende.eve.rpc.annotation.Optional;
 
 public class MerlinAgent extends CapeAgent {
 	// TODO: move the storage of the data to a flat table database,
@@ -61,7 +61,7 @@ public class MerlinAgent extends CapeAgent {
 	 */
 	public List<DataSource> find(
 			@Name("userId") String userId, 
-			@Required(false) @Name("dataType") String dataType) throws Exception {
+			@Optional @Name("dataType") String dataType) throws Exception {
 		List<DataSource> dataSources = new ArrayList<DataSource>();
 		
 		GraphDatabaseService db = DB.get();

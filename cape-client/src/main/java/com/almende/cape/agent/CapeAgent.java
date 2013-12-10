@@ -8,7 +8,7 @@ import com.almende.eve.agent.AgentHost;
 import com.almende.eve.rpc.annotation.Access;
 import com.almende.eve.rpc.annotation.AccessType;
 import com.almende.eve.rpc.annotation.Name;
-import com.almende.eve.rpc.annotation.Required;
+import com.almende.eve.rpc.annotation.Optional;
 import com.almende.eve.rpc.jsonrpc.jackson.JOM;
 import com.almende.eve.state.State;
 import com.almende.eve.transport.xmpp.XmppService;
@@ -53,8 +53,8 @@ public abstract class CapeAgent extends Agent {
 	 * @throws Exception
 	 */
 	public void changeAccount(
-			@Name("oldUsername") @Required(false) String oldUsername,
-			@Name("oldPassword") @Required(false) String oldPassword,
+			@Name("oldUsername") @Optional String oldUsername,
+			@Name("oldPassword") @Optional String oldPassword,
 			@Name("newUsername") String newUsername,
 			@Name("newPassword") String newPassword,
 			@Name("newResource") String newResource) throws Exception {
@@ -245,7 +245,7 @@ public abstract class CapeAgent extends Agent {
 		logger.info("Requesting the MerlinAgent for a dataSource with userId="
 				+ userId + " and dataType=" + dataType);
 
-		ArrayNode contactSources = send(MERLIN_URL, method, params,JOM.getSimpleType(ArrayNode.class));
+		ArrayNode contactSources = send(MERLIN_URL, method, params,ArrayNode.class);
 		if (contactSources.size() > 0) {
 			ObjectNode contactSource = (ObjectNode) contactSources.get(0);
 
@@ -314,7 +314,7 @@ public abstract class CapeAgent extends Agent {
 		String filterStr = (filter != null) ? JOM.getInstance()
 				.writeValueAsString(filter) : "";
 		params.put("filter", filterStr);
-		String contacts = send(contactAgentUrl, method, params,JOM.getSimpleType(String.class));
+		String contacts = send(contactAgentUrl, method, params,String.class);
 		ArrayNode array = JOM.getInstance()
 				.readValue(contacts, ArrayNode.class);
 

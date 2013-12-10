@@ -8,7 +8,7 @@ import java.util.logging.Logger;
 import com.almende.cape.handler.NotificationHandler;
 import com.almende.cape.handler.StateChangeHandler;
 import com.almende.eve.rpc.annotation.Name;
-import com.almende.eve.rpc.annotation.Required;
+import com.almende.eve.rpc.annotation.Optional;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class CapeClientAgent extends CapeDialogAgent {
@@ -134,10 +134,10 @@ public class CapeClientAgent extends CapeDialogAgent {
 	 * @param params
 	 */
 	public void onStateChange(
-			@Required(false) @Name("subscriptionId") String subscriptionId,
-			@Required(false) @Name("agent") String agent,
-	        @Required(false) @Name("event") String event, 
-	        @Required(false) @Name("params") ObjectNode params) {
+			@Optional @Name("subscriptionId") String subscriptionId,
+			@Optional @Name("agent") String agent,
+	        @Optional @Name("event") String event, 
+	        @Optional @Name("params") ObjectNode params) {
 		for (String key : stateChangeHandlers.keySet()) {
 			StateSubscription subscription = stateChangeHandlers.get(key);
 			if (subscription.subscriptionId.equals(subscriptionId)) {

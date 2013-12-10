@@ -8,7 +8,7 @@ import java.util.Map;
 import com.almende.cape.entity.Location;
 import com.almende.cape.entity.Person;
 import com.almende.eve.rpc.annotation.Name;
-import com.almende.eve.rpc.annotation.Required;
+import com.almende.eve.rpc.annotation.Optional;
 import com.almende.eve.rpc.jsonrpc.JSONRequest;
 import com.almende.eve.rpc.jsonrpc.jackson.JOM;
 import com.almende.eve.state.State;
@@ -141,7 +141,7 @@ public class BuildingAgent extends CapeAgent {
 	 *                  Available values: "in" or "out"
 	 * @return users
 	 */
-	public List<Person> list(@Required(false) @Name("status") String status) {
+	public List<Person> list(@Optional @Name("status") String status) {
 		List<Person> users = getState().get(new TypedKey<ArrayList<Person>>("users"){});
 		if (users != null) {
 			if ("in".equals(status)) {
@@ -190,10 +190,10 @@ public class BuildingAgent extends CapeAgent {
 	 * @throws Exception
 	 */
 	public void onChange(
-			@Required(false) @Name("subscriptionId") String subscriptionId, 
-			@Required(false) @Name("agent") String agent, 
-			@Required(false) @Name("event") String event, 
-			@Required(false) @Name("params") ObjectNode params) throws Exception {
+			@Optional @Name("subscriptionId") String subscriptionId, 
+			@Optional @Name("agent") String agent, 
+			@Optional @Name("event") String event, 
+			@Optional @Name("params") ObjectNode params) throws Exception {
 		// trigger a change event (for debugging)
 		ObjectNode changeParams = JOM.createObjectNode();
 		changeParams.put("subscriptionId", subscriptionId);

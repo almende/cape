@@ -4,7 +4,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 
 import com.almende.eve.rpc.annotation.Name;
-import com.almende.eve.rpc.annotation.Required;
+import com.almende.eve.rpc.annotation.Optional;
 import com.almende.eve.rpc.jsonrpc.JSONRequest;
 import com.almende.eve.rpc.jsonrpc.jackson.JOM;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -34,9 +34,9 @@ public class StateAgent extends CapeStateAgent {
 	 * @throws Exception
 	 */
 	public void setLocation(
-			@Required(false) @Name("lat") Double lat, 
-			@Required(false) @Name("lng") Double lng, 
-			@Required(false) @Name("description") String description) throws Exception {
+			@Optional @Name("lat") Double lat, 
+			@Optional @Name("lng") Double lng, 
+			@Optional @Name("description") String description) throws Exception {
 		// store the new location
 		HashMap<String, Object> location = new HashMap<String, Object>();
 		if (lat != null) {

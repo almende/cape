@@ -14,7 +14,7 @@ import android.widget.TextView;
 
 import com.almende.cape.android.R;
 import com.almende.eve.rpc.annotation.Name;
-import com.almende.eve.rpc.annotation.Required;
+import com.almende.eve.rpc.annotation.Optional;
 import com.almende.eve.rpc.jsonrpc.JSONRequest;
 import com.almende.eve.rpc.jsonrpc.jackson.JOM;
 import com.almende.util.TypeUtil;
@@ -105,9 +105,9 @@ public class LocationAgent extends CapeStateAgent {
 	 * @param description
 	 * @throws Exception
 	 */
-	public void setLocation(@Required(false) @Name("lat") Double lat,
-			@Required(false) @Name("lng") Double lng,
-			@Required(false) @Name("description") String description)
+	public void setLocation(@Optional @Name("lat") Double lat,
+			@Optional @Name("lng") Double lng,
+			@Optional @Name("description") String description)
 			throws Exception {
 		// store the new location
 		HashMap<String, Object> location = new HashMap<String, Object>();
